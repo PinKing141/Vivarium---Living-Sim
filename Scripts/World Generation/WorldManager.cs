@@ -1,47 +1,37 @@
 using Godot;
 using System;
 
-public enum BiomeType
-{
-	Ocean,
-	Beach,
-	Grassland,
-	Forest,
-	Desert,
-	Mountains
-}
+public enum BiomeType { Ocean, Beach, Grassland, Forest, Desert, Mountains }
 
 public partial class WorldManager : Node3D
 {
-	// --- MAP SETTINGS ---
 	[Export] public int MapWidth = 50;
 	[Export] public int MapHeight = 50;
 	[Export] public float TileSpacing = 2.0f;
 
-	// --- NOISE SCALES ---
 	[Export] public float ElevationScale = 0.05f;
 	[Export] public float MoistureScale = 0.08f;
 
-	// --- EXTERNAL SYSTEMS ---
 	[Export] public VegetationSpawner VegetationSpawner;
 	
 	// --- ANIMAL SETTINGS ---
 	[Export] public PackedScene RabbitScene;
-	[Export] public int InitialRabbitCount = 15; // NEW: Customise how many rabbits spawn!
+	[Export] public int InitialRabbitCount = 20; 
 
-	// --- TERRAIN TILES ---
+	// NEW: Predator Spawner
+	[Export] public PackedScene PredatorScene;
+	[Export] public int InitialPredatorCount = 3; 
+
 	[Export] public PackedScene GrassTile;
 	[Export] public PackedScene WaterTile;
 	[Export] public PackedScene SandTile;
 	[Export] public PackedScene StoneTile;
 
-	// --- NOISE GENERATORS ---
 	private FastNoiseLite elevationNoise;
 	private FastNoiseLite moistureNoise;
 	private FastNoiseLite vegetationNoise;
 	private FastNoiseLite blendNoise;
 
-	// --- MEMORY GRID ---
 	private HexTile[,] worldGrid;
 
 	public override void _Ready()
@@ -50,12 +40,11 @@ public partial class WorldManager : Node3D
 
 		GenerateNoise();
 		GenerateWorld();
-
-		// Connect all tiles together
 		BuildTileNeighbours();
 
-		// NEW: Spawn the colony!
-		SpawnAnimals();
+		// Spawn both species!
+		SpawnSpecies(RabbitScene, InitialRabbitCount);
+		SpawnSpecies(PredatorScene, InitialPredatorCount);
 	}
 
 	private void GenerateNoise()
@@ -98,12 +87,10 @@ public partial class WorldManager : Node3D
 	{
 		Vector3 worldPosition = GetHexPosition(gridX, gridZ);
 
-		// Sample base noise
 		float baseElevation = elevationNoise.GetNoise2D(gridX, gridZ);
 		float baseMoisture = moistureNoise.GetNoise2D(gridX, gridZ);
 		float vegetationDensity = vegetationNoise.GetNoise2D(gridX, gridZ);
 
-		// Biome Blending wobble
 		float blendWobble = blendNoise.GetNoise2D(gridX, gridZ) * 0.08f;
 		float finalElevation = baseElevation + blendWobble;
 		float finalMoisture = baseMoisture + blendWobble;
@@ -117,22 +104,10 @@ public partial class WorldManager : Node3D
 		tileInstance.Position = worldPosition;
 		AddChild(tileInstance);
 
-		// Store the tile in memory
-		HexTile tile = new HexTile(
-			new Vector2I(gridX, gridZ),
-			worldPosition,
-			biome,
-			finalElevation,
-			finalMoisture,
-			tileInstance
-		);
+		HexTile tile = new HexTile(new Vector2I(gridX, gridZ), worldPosition, biome, finalElevation, finalMoisture, tileInstance);
 		worldGrid[gridX, gridZ] = tile;
 
-		// Spawn and track vegetation
-		if (VegetationSpawner != null)
-		{
-			VegetationSpawner.SpawnVegetation(tile, vegetationDensity);
-		}
+		if (VegetationSpawner != null) VegetationSpawner.SpawnVegetation(tile, vegetationDensity);
 	}
 
 	private void BuildTileNeighbours()
@@ -159,34 +134,15 @@ public partial class WorldManager : Node3D
 
 	private Vector2I[] GetHexOffsets(int row)
 	{
-		if (row % 2 == 0) // Even rows
-		{
-			return new Vector2I[]
-			{
-				new Vector2I(-1, 0), new Vector2I(1, 0),
-				new Vector2I(0, -1), new Vector2I(-1, -1),
-				new Vector2I(0, 1),  new Vector2I(-1, 1)
-			};
-		}
-		else // Odd rows
-		{
-			return new Vector2I[]
-			{
-				new Vector2I(-1, 0), new Vector2I(1, 0),
-				new Vector2I(1, -1), new Vector2I(0, -1),
-				new Vector2I(1, 1),  new Vector2I(0, 1)
-			};
-		}
+		if (row % 2 == 0) return new Vector2I[] { new Vector2I(-1, 0), new Vector2I(1, 0), new Vector2I(0, -1), new Vector2I(-1, -1), new Vector2I(0, 1), new Vector2I(-1, 1) };
+		else return new Vector2I[] { new Vector2I(-1, 0), new Vector2I(1, 0), new Vector2I(1, -1), new Vector2I(0, -1), new Vector2I(1, 1), new Vector2I(0, 1) };
 	}
 
 	private Vector3 GetHexPosition(int x, int z)
 	{
 		float xOffset = x * TileSpacing;
-		float zOffset = z * TileSpacing * 0.866f; // √3 / 2
-
-		if (z % 2 == 1)
-			xOffset += TileSpacing * 0.5f;
-
+		float zOffset = z * TileSpacing * 0.866f; 
+		if (z % 2 == 1) xOffset += TileSpacing * 0.5f;
 		return new Vector3(xOffset, 0, zOffset);
 	}
 
@@ -214,36 +170,31 @@ public partial class WorldManager : Node3D
 		}
 	}
 
-	// --- NEW ANIMAL SPAWN LOGIC ---
-	private void SpawnAnimals()
+	// Refactored to handle multiple different species packs!
+	private void SpawnSpecies(PackedScene scene, int count)
 	{
-		if (RabbitScene == null) return;
+		if (scene == null) return;
 
 		int spawned = 0;
-		int maxAttempts = 1000; // Failsafe to prevent freezing if the map is 100% ocean
+		int maxAttempts = 1000;
 		int attempts = 0;
 
-		while (spawned < InitialRabbitCount && attempts < maxAttempts)
+		while (spawned < count && attempts < maxAttempts)
 		{
 			attempts++;
-
-			// Pick a random X and Z coordinate
 			int randomX = (int)(GD.Randi() % MapWidth);
 			int randomZ = (int)(GD.Randi() % MapHeight);
-
 			HexTile randomTile = worldGrid[randomX, randomZ];
 
-			// Ensure the randomly selected tile isn't ocean or mountain
 			if (randomTile != null && randomTile.IsWalkable)
 			{
-				Animal rabbit = (Animal)RabbitScene.Instantiate();
-				AddChild(rabbit);
-				rabbit.Init(randomTile);
-				
+				Animal animal = (Animal)scene.Instantiate();
+				AddChild(animal);
+				animal.Init(randomTile);
 				spawned++;
 			}
 		}
 
-		GD.Print($"Successfully spawned {spawned} rabbits into the world!");
+		GD.Print($"Successfully spawned {spawned} animals of species: {scene.ResourcePath}");
 	}
 }

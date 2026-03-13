@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://lnqdoj3ou57o" path="res://Scenes/Terrain/GrassTile.tscn" id="2_aw1lf"]
 [ext_resource type="Script" uid="uid://b262rtv7nmxju" path="res://Scripts/Utility/CameraController.cs" id="2_qtv3y"]
 [ext_resource type="PackedScene" uid="uid://bvbstkk7frir5" path="res://Scenes/Animals/Rabbit/Rabbit.tscn" id="2_xd21n"]
+[ext_resource type="PackedScene" uid="uid://nlg2rwnd2hui" path="res://Scenes/Animals/Fox/Fox.tscn" id="3_iwp64"]
 [ext_resource type="PackedScene" uid="uid://qydqxjmicgiu" path="res://Scenes/Terrain/SandTile.tscn" id="4_7npjy"]
 [ext_resource type="PackedScene" uid="uid://dt8cpvf2io43f" path="res://Scenes/Terrain/StoneTile.tscn" id="5_4vhfm"]
 [ext_resource type="PackedScene" uid="uid://oarhry8a775k" path="res://Scenes/Terrain/WaterTile.tscn" id="6_dvlhv"]
@@ -56,11 +57,12 @@ shadow_bias = 0.05
 
 [node name="WorldManager" type="Node3D" parent="." unique_id=478693442 node_paths=PackedStringArray("VegetationSpawner")]
 script = ExtResource("1_p8rbg")
-MapWidth = 30
-MapHeight = 30
 TileSpacing = 1.0
 VegetationSpawner = NodePath("../VegetationSpawner")
 RabbitScene = ExtResource("2_xd21n")
+InitialRabbitCount = 15
+PredatorScene = ExtResource("3_iwp64")
+InitialPredatorCount = 5
 GrassTile = ExtResource("2_aw1lf")
 WaterTile = ExtResource("6_dvlhv")
 SandTile = ExtResource("4_7npjy")

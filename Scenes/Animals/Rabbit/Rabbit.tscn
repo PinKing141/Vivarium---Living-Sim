@@ -5,6 +5,8 @@
 
 [node name="RabbitNode" unique_id=1618555257 node_paths=PackedStringArray("AnimPlayer") instance=ExtResource("1_ibill")]
 script = ExtResource("2_ly6l0")
+EatingDistance = 1.5
+SpeciesScenePath = "uid://bvbstkk7frir5"
 AnimPlayer = NodePath("AnimationPlayer")
 IdleAnim = "Armature_001|Idle"
 WalkAnim = "Armature_001|Run"
