@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bv7iu38r0qv2u"
+path="res://.godot/imported/Willow_Autumn_3.obj-7fc9bd3cab21dac9dbaa13171529f788.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Willow_Autumn_3.obj-7fc9bd3cab21dac9dbaa13171529f788.mesh"]
+
+source_file="res://Assets/Terrain/Nature/Trees/WillowTrees/Willow_Autumn/Willow_Autumn_3.obj"
+dest_files=["res://.godot/imported/Willow_Autumn_3.obj-7fc9bd3cab21dac9dbaa13171529f788.mesh", "res://.godot/imported/Willow_Autumn_3.obj-7fc9bd3cab21dac9dbaa13171529f788.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

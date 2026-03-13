@@ -1,0 +1,79 @@
+[gd_scene format=3 uid="uid://3iiw2owm74yy"]
+
+[ext_resource type="Script" uid="uid://b7motiq8f0rtk" path="res://Scripts/World Generation/WorldManager.cs" id="1_p8rbg"]
+[ext_resource type="PackedScene" uid="uid://lnqdoj3ou57o" path="res://Scenes/Terrain/GrassTile.tscn" id="2_aw1lf"]
+[ext_resource type="Script" uid="uid://b262rtv7nmxju" path="res://Scripts/Utility/CameraController.cs" id="2_qtv3y"]
+[ext_resource type="PackedScene" uid="uid://bvbstkk7frir5" path="res://Scenes/Animals/Rabbit/Rabbit.tscn" id="2_xd21n"]
+[ext_resource type="PackedScene" uid="uid://qydqxjmicgiu" path="res://Scenes/Terrain/SandTile.tscn" id="4_7npjy"]
+[ext_resource type="PackedScene" uid="uid://dt8cpvf2io43f" path="res://Scenes/Terrain/StoneTile.tscn" id="5_4vhfm"]
+[ext_resource type="PackedScene" uid="uid://oarhry8a775k" path="res://Scenes/Terrain/WaterTile.tscn" id="6_dvlhv"]
+[ext_resource type="PackedScene" uid="uid://fq0m24lidwvs" path="res://Scenes/Nature/OakTrees/OakTree_01.tscn" id="7_qdkat"]
+[ext_resource type="Script" uid="uid://b8h0clihnu6yi" path="res://Scripts/World Generation/VegetationSpawner.cs" id="8_5s61s"]
+[ext_resource type="PackedScene" uid="uid://bdjgbxroyrjao" path="res://Scenes/Nature/OakTrees/OakTree_02.tscn" id="8_udh0u"]
+[ext_resource type="PackedScene" uid="uid://cftlv2e8wxsys" path="res://Scenes/Nature/OakTrees/OakTree_03.tscn" id="9_xggvw"]
+[ext_resource type="PackedScene" uid="uid://dty6ugsga5shf" path="res://Scenes/Nature/OakTrees/OakTree_04.tscn" id="10_xd21n"]
+[ext_resource type="PackedScene" uid="uid://b0jw1eqb78fu2" path="res://Scenes/Nature/OakTrees/OakTree_05.tscn" id="11_iwp64"]
+[ext_resource type="PackedScene" uid="uid://dm4c0v4thtnt2" path="res://Scenes/Nature/Bushes/Bush_01.tscn" id="12_4etfk"]
+[ext_resource type="PackedScene" uid="uid://e3le4vatywvq" path="res://Scenes/Nature/Bushes/Bush_02.tscn" id="13_oa1gp"]
+[ext_resource type="PackedScene" uid="uid://d277akyk0mkjc" path="res://Scenes/Nature/Cactus/Cactus_Normal/Cactus_01.tscn" id="14_32vk6"]
+[ext_resource type="PackedScene" uid="uid://ooe6v4olbuaq" path="res://Scenes/Nature/Bushes/BerryBushes/Berry_Bush_01.tscn" id="14_xggvw"]
+[ext_resource type="PackedScene" uid="uid://cwi8osguoh3ls" path="res://Scenes/Nature/Cactus/Cactus_Normal/Cactus_02.tscn" id="15_crdpj"]
+[ext_resource type="PackedScene" uid="uid://m0swb344m3qt" path="res://Scenes/Nature/Bushes/BerryBushes/Berry_Bush_02.tscn" id="15_xd21n"]
+[ext_resource type="PackedScene" uid="uid://b060nmbff500n" path="res://Scenes/Nature/Cactus/Cactus_Normal/Cactus_03.tscn" id="16_pob8v"]
+[ext_resource type="PackedScene" uid="uid://diem0eif2y2vg" path="res://Scenes/Nature/Cactus/Cactus_Normal/Cactus_04.tscn" id="17_l4ir0"]
+[ext_resource type="PackedScene" uid="uid://b1ionanettlew" path="res://Scenes/Nature/Cactus/Cactus_Normal/Cactus_05.tscn" id="18_qknmw"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_qdkat"]
+
+[sub_resource type="Sky" id="Sky_udh0u"]
+sky_material = SubResource("ProceduralSkyMaterial_qdkat")
+
+[sub_resource type="Environment" id="Environment_xggvw"]
+background_mode = 2
+sky = SubResource("Sky_udh0u")
+ambient_light_source = 3
+ambient_light_color = Color(0.7058824, 0.78431374, 1, 1)
+ambient_light_energy = 0.4
+ssao_enabled = true
+ssao_radius = 1.2
+ssao_intensity = 1.3
+sdfgi_enabled = true
+sdfgi_min_cell_size = 1.0
+fog_enabled = true
+fog_sun_scatter = 0.5
+
+[node name="World" type="Node3D" unique_id=1839737941]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1437438559]
+environment = SubResource("Environment_xggvw")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=139567756]
+transform = Transform3D(0.7071068, -0.61237246, 0.35355338, 0, 0.49999997, 0.86602545, -0.7071068, -0.61237246, 0.35355338, 0, 40, 0)
+light_color = Color(1, 0.95686275, 0.8392157, 1)
+light_energy = 1.2
+shadow_enabled = true
+shadow_bias = 0.05
+
+[node name="WorldManager" type="Node3D" parent="." unique_id=478693442 node_paths=PackedStringArray("VegetationSpawner")]
+script = ExtResource("1_p8rbg")
+MapWidth = 30
+MapHeight = 30
+TileSpacing = 1.0
+VegetationSpawner = NodePath("../VegetationSpawner")
+RabbitScene = ExtResource("2_xd21n")
+GrassTile = ExtResource("2_aw1lf")
+WaterTile = ExtResource("6_dvlhv")
+SandTile = ExtResource("4_7npjy")
+StoneTile = ExtResource("5_4vhfm")
+
+[node name="VegetationSpawner" type="Node3D" parent="." unique_id=2360425]
+script = ExtResource("8_5s61s")
+OakTrees = Array[PackedScene]([ExtResource("7_qdkat"), ExtResource("8_udh0u"), ExtResource("9_xggvw"), ExtResource("10_xd21n"), ExtResource("11_iwp64")])
+Bushes = Array[PackedScene]([ExtResource("12_4etfk"), ExtResource("13_oa1gp")])
+BerryBushes = Array[PackedScene]([ExtResource("14_xggvw"), ExtResource("15_xd21n")])
+Cactus = Array[PackedScene]([ExtResource("14_32vk6"), ExtResource("15_crdpj"), ExtResource("16_pob8v"), ExtResource("17_l4ir0"), ExtResource("18_qknmw")])
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=772986405]
+transform = Transform3D(1, 0, 0, 0, 0.7071068, 0.7071068, 0, -0.7071068, 0.7071068, 10, 15, 25)
+current = true
+script = ExtResource("2_qtv3y")

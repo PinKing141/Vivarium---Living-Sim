@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://b3jyjmmi3wmgg"
+path="res://.godot/imported/PalmTree_4.obj-46e3c1d137d07391a29ee6ccfa5998f0.mesh"
+
+[deps]
+
+files=["res://.godot/imported/PalmTree_4.obj-46e3c1d137d07391a29ee6ccfa5998f0.mesh"]
+
+source_file="res://Assets/Terrain/Nature/Trees/PalmTrees/Palm_Tree/PalmTree_4.obj"
+dest_files=["res://.godot/imported/PalmTree_4.obj-46e3c1d137d07391a29ee6ccfa5998f0.mesh", "res://.godot/imported/PalmTree_4.obj-46e3c1d137d07391a29ee6ccfa5998f0.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

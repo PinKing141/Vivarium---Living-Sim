@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://lnqdoj3ou57o"]
+
+[ext_resource type="ArrayMesh" uid="uid://q6hb240tpxll" path="res://Assets/Terrain/Tiles/Grass/grass.obj" id="1_jgjiu"]
+[ext_resource type="Material" uid="uid://gyv0mdecqw8r" path="res://Assets/Terrain/Tiles/Textures/TerrianMaterial.tres" id="1_m5r6p"]
+
+[node name="GrassTile" type="Node3D" unique_id=265727698]
+
+[node name="Grass" type="MeshInstance3D" parent="." unique_id=7869117]
+material_override = ExtResource("1_m5r6p")
+mesh = ExtResource("1_jgjiu")

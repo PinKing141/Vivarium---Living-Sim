@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://oarhry8a775k"]
+
+[ext_resource type="ArrayMesh" uid="uid://sg7v7cguhaba" path="res://Assets/Terrain/Tiles/Water/water.obj" id="1_ljwrw"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kyysa"]
+transparency = 4
+albedo_color = Color(0.10291102, 0.45834458, 0.6765462, 1)
+metallic = 0.15
+metallic_specular = 0.6
+
+[node name="WaterTile" type="Node3D" unique_id=1663689300]
+
+[node name="Water" type="MeshInstance3D" parent="." unique_id=1692071307]
+material_override = SubResource("StandardMaterial3D_kyysa")
+mesh = ExtResource("1_ljwrw")

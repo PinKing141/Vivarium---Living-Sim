@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://dt8cpvf2io43f"]
+
+[ext_resource type="ArrayMesh" uid="uid://75invlr26w1d" path="res://Assets/Terrain/Tiles/Stone/stone.obj" id="1_a78wq"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a2uli"]
+albedo_color = Color(0.29954746, 0.29954746, 0.29954743, 1)
+metallic = 0.4
+
+[node name="StoneTile" type="Node3D" unique_id=1555552888]
+
+[node name="Stone" type="MeshInstance3D" parent="." unique_id=909032461]
+material_override = SubResource("StandardMaterial3D_a2uli")
+mesh = ExtResource("1_a78wq")

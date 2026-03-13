@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://cp4ur1dhb8vue"]
+
+[ext_resource type="ArrayMesh" uid="uid://bjcotayxekg26" path="res://Assets/Terrain/Nature/Cactus/Cactus_Flower/CactusFlowers_3.obj" id="1_p01gh"]
+[ext_resource type="Material" uid="uid://batanin62h0gw" path="res://Assets/Terrain/Nature/Trees/OakTrees/Texture/Green_Leaves.tres" id="2_aqsia"]
+[ext_resource type="Material" uid="uid://cff46h27sx4hc" path="res://Assets/Terrain/Nature/Trees/OakTrees/Texture/Pink.tres" id="3_u367g"]
+
+[node name="CactusFlower01" type="Node3D" unique_id=729098667]
+
+[node name="CactusFlowers3" type="MeshInstance3D" parent="." unique_id=1424479443]
+mesh = ExtResource("1_p01gh")
+surface_material_override/0 = ExtResource("2_aqsia")
+surface_material_override/1 = ExtResource("3_u367g")

@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://fq0m24lidwvs"]
+
+[ext_resource type="ArrayMesh" uid="uid://dcqcbeftonfx2" path="res://Assets/Terrain/Nature/Trees/OakTrees/Oak_Tree/CommonTree_1.obj" id="1_gprmm"]
+[ext_resource type="Material" uid="uid://cpa5jvvs76nns" path="res://Assets/Terrain/Nature/Trees/OakTrees/Texture/Brown_Trunk.tres" id="2_ry0vk"]
+[ext_resource type="Material" uid="uid://batanin62h0gw" path="res://Assets/Terrain/Nature/Trees/OakTrees/Texture/Green_Leaves.tres" id="3_fa27i"]
+
+[node name="OakTree" type="Node3D" unique_id=1325342900]
+
+[node name="CommonTree1" type="MeshInstance3D" parent="." unique_id=61681380]
+mesh = ExtResource("1_gprmm")
+surface_material_override/0 = ExtResource("2_ry0vk")
+surface_material_override/1 = ExtResource("3_fa27i")

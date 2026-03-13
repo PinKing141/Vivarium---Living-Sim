@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://d3ymvft1tohsb"]
+
+[ext_resource type="ArrayMesh" uid="uid://cqpcurfv0x074" path="res://Assets/Terrain/Nature/Trees/BirchTrees/Birch_Tree/BirchTree_2.obj" id="1_32ouu"]
+[ext_resource type="Material" uid="uid://cajg7qm2b3ct8" path="res://Assets/Terrain/Nature/Trees/OakTrees/Texture/Green_Dark_Leaves.tres" id="2_uy37a"]
+
+[node name="BirchTree01" type="Node3D" unique_id=294960621]
+
+[node name="BirchTree2" type="MeshInstance3D" parent="." unique_id=1598678431]
+mesh = ExtResource("1_32ouu")
+surface_material_override/2 = ExtResource("2_uy37a")
+surface_material_override/3 = ExtResource("2_uy37a")

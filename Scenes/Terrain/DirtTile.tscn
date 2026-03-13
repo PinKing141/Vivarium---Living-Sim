@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://cpjo7jlp4hiti"]
+
+[ext_resource type="Material" uid="uid://cpa5jvvs76nns" path="res://Assets/Terrain/Nature/Trees/OakTrees/Texture/Brown_Trunk.tres" id="1_2ru10"]
+[ext_resource type="ArrayMesh" uid="uid://d2jbcscn7tba1" path="res://Assets/Terrain/Tiles/Dirt/dirt.obj" id="1_tip4g"]
+
+[node name="DirtTile" type="Node3D" unique_id=1087768775]
+
+[node name="Dirt" type="MeshInstance3D" parent="." unique_id=785133863]
+material_override = ExtResource("1_2ru10")
+mesh = ExtResource("1_tip4g")

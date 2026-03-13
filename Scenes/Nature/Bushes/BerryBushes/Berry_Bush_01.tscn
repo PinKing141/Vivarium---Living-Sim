@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://ooe6v4olbuaq"]
+
+[ext_resource type="Script" uid="uid://dylqq4lqejtif" path="res://Scripts/Utility/BerryBush.cs" id="1_23kjd"]
+[ext_resource type="ArrayMesh" uid="uid://d2sol28te4rm5" path="res://Assets/Terrain/Nature/Bush/Bush_Normal/Bush_1.obj" id="2_mggqj"]
+[ext_resource type="ArrayMesh" uid="uid://c6xh52gwm4ris" path="res://Assets/Terrain/Nature/Bush/Bush_Berries/BushBerries_1.obj" id="3_7obsw"]
+[ext_resource type="Material" uid="uid://cajg7qm2b3ct8" path="res://Assets/Terrain/Nature/Trees/OakTrees/Texture/Green_Dark_Leaves.tres" id="3_mggqj"]
+[ext_resource type="Material" uid="uid://dvyyhpse2gy30" path="res://Assets/Terrain/Nature/Trees/OakTrees/Texture/red_Berry.tres" id="5_7obsw"]
+
+[node name="BerryBush" type="Node3D" unique_id=643895409]
+script = ExtResource("1_23kjd")
+RegrowTime = 40.0
+
+[node name="Bush_NoBerries" type="MeshInstance3D" parent="." unique_id=637139797]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.22266614, -0.04890573, 1.9203099)
+mesh = ExtResource("2_mggqj")
+surface_material_override/0 = ExtResource("3_mggqj")
+
+[node name="Bush_WithBerries" type="MeshInstance3D" parent="." unique_id=310289954]
+mesh = ExtResource("3_7obsw")
+surface_material_override/0 = ExtResource("3_mggqj")
+surface_material_override/1 = ExtResource("5_7obsw")

@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://dm4c0v4thtnt2"]
+
+[ext_resource type="ArrayMesh" uid="uid://d2sol28te4rm5" path="res://Assets/Terrain/Nature/Bush/Bush_Normal/Bush_1.obj" id="1_qmo8k"]
+[ext_resource type="Material" uid="uid://cajg7qm2b3ct8" path="res://Assets/Terrain/Nature/Trees/OakTrees/Texture/Green_Dark_Leaves.tres" id="2_wp004"]
+
+[node name="Bush01" type="Node3D" unique_id=609102218]
+
+[node name="Bush1" type="MeshInstance3D" parent="." unique_id=1796308743]
+mesh = ExtResource("1_qmo8k")
+surface_material_override/0 = ExtResource("2_wp004")

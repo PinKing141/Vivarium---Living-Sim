@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://4p3xwmomjp82"
+path="res://.godot/imported/Rock_Snow_3.obj-d988b89f9893f1e5217d3a33f5df1efc.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Rock_Snow_3.obj-d988b89f9893f1e5217d3a33f5df1efc.mesh"]
+
+source_file="res://Assets/Terrain/Nature/Rock/Rock_Snow/Rock_Snow_3.obj"
+dest_files=["res://.godot/imported/Rock_Snow_3.obj-d988b89f9893f1e5217d3a33f5df1efc.mesh", "res://.godot/imported/Rock_Snow_3.obj-d988b89f9893f1e5217d3a33f5df1efc.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

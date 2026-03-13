@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://cftlv2e8wxsys"]
+
+[ext_resource type="ArrayMesh" uid="uid://b7ga5a1aoqlum" path="res://Assets/Terrain/Nature/Trees/OakTrees/Oak_Tree/CommonTree_3.obj" id="1_hv2dv"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hv2dv"]
+albedo_color = Color(0.4117647, 0.22352941, 0.07058824, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5uhnv"]
+albedo_color = Color(0.02745098, 0.2627451, 0.007843138, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6s7cq"]
+albedo_color = Color(0.02745098, 0.2627451, 0.007843138, 1)
+
+[node name="OakTree" type="Node3D" unique_id=1325342900]
+
+[node name="CommonTree3" type="MeshInstance3D" parent="." unique_id=734195945]
+mesh = ExtResource("1_hv2dv")
+surface_material_override/0 = SubResource("StandardMaterial3D_hv2dv")
+surface_material_override/1 = SubResource("StandardMaterial3D_5uhnv")
+surface_material_override/2 = SubResource("StandardMaterial3D_6s7cq")
