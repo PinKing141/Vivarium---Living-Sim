@@ -1,18 +1,17 @@
-[gd_scene format=3 uid="uid://nlg2rwnd2hui"]
+[gd_scene format=3 uid="uid://dyji7s11c1xi4"]
 
-[ext_resource type="PackedScene" uid="uid://hm8liq8oeu7x" path="res://Assets/Animals/Predators/Fox.gltf" id="1_ko2kh"]
-[ext_resource type="Script" uid="uid://bf1ahl3d0wuhj" path="res://Scripts/Simulation/Animal.cs" id="2_82d81"]
+[ext_resource type="PackedScene" uid="uid://hm8liq8oeu7x" path="res://Assets/Animals/Predators/Fox.gltf" id="1_2qu3o"]
+[ext_resource type="Script" uid="uid://bf1ahl3d0wuhj" path="res://Scripts/Simulation/Animal.cs" id="2_c4dfs"]
 
-[node name="Fox2" unique_id=356980971 node_paths=PackedStringArray("AnimPlayer") instance=ExtResource("1_ko2kh")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.304697, 0.63391656, 6.6942234)
-script = ExtResource("2_82d81")
+[node name="Fox2" unique_id=356980971 node_paths=PackedStringArray("AnimPlayer") instance=ExtResource("1_2qu3o")]
+script = ExtResource("2_c4dfs")
 Diet = 1
-SpeciesScenePath = "uid://nlg2rwnd2hui"
+SpeciesScenePath = "uid://dyji7s11c1xi4"
 AnimPlayer = NodePath("AnimationPlayer")
 EatAnim = "Eating"
 
 [node name="AnimalArmature" parent="." index="0" unique_id=1432143654]
-transform = Transform3D(0.305, 0, 0, 0, 0.305, 0, 0, 0, 0.305, 0, 0, 0)
+transform = Transform3D(0.255, 0, 0, 0, 0.255, 0, 0, 0, 0.255, 0, 0, 0)
 
 [node name="Skeleton3D" parent="AnimalArmature" index="0" unique_id=205308555]
 bones/0/rotation = Quaternion(-2.9802326e-08, 0, 0, 1)

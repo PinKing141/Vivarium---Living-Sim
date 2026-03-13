@@ -6207,6 +6207,38 @@ _subresources={
 "slice_99/start_frame": 0,
 "slices/amount": 0
 }
+},
+"materials": {
+"Black": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://Assets/Animals/Texture/Black.tres",
+"use_external/path": "uid://k2lmfn0hyse0"
+},
+"Eyes": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://Assets/Animals/Texture/Eyes.tres",
+"use_external/path": "uid://cxorx6xeteufd"
+},
+"Grey": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://Assets/Animals/Texture/Grey.tres",
+"use_external/path": "uid://dkqc7m46v8b6k"
+},
+"Main": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://Assets/Animals/Texture/Main.tres",
+"use_external/path": "uid://c3gcxctswtcmb"
+},
+"Main_Light": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://Assets/Animals/Texture/Main_Light.tres",
+"use_external/path": "uid://8r8vr17wixgn"
+}
+},
+"nodes": {
+"PATH:AnimalArmature": {
+"node/script": null
+}
 }
 }
 gltf/naming_version=2
