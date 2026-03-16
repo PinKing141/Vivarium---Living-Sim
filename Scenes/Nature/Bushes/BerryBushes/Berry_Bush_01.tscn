@@ -11,7 +11,6 @@ script = ExtResource("1_23kjd")
 RegrowTime = 40.0
 
 [node name="Bush_NoBerries" type="MeshInstance3D" parent="." unique_id=637139797]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.22266614, -0.04890573, 1.9203099)
 mesh = ExtResource("2_mggqj")
 surface_material_override/0 = ExtResource("3_mggqj")
 

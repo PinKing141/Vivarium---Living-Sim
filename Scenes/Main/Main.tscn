@@ -1,15 +1,16 @@
 [gd_scene format=3 uid="uid://3iiw2owm74yy"]
 
-[ext_resource type="Script" uid="uid://b7motiq8f0rtk" path="res://Scripts/World Generation/WorldManager.cs" id="1_p8rbg"]
+[ext_resource type="Script" uid="uid://b7motiq8f0rtk" path="res://Scripts/World/WorldManager.cs" id="1_p8rbg"]
 [ext_resource type="PackedScene" uid="uid://lnqdoj3ou57o" path="res://Scenes/Terrain/GrassTile.tscn" id="2_aw1lf"]
 [ext_resource type="Script" uid="uid://b262rtv7nmxju" path="res://Scripts/Utility/CameraController.cs" id="2_qtv3y"]
 [ext_resource type="PackedScene" uid="uid://bvbstkk7frir5" path="res://Scenes/Animals/Rabbit/Rabbit.tscn" id="2_xd21n"]
 [ext_resource type="PackedScene" uid="uid://dyji7s11c1xi4" path="res://Scenes/Animals/Fox/fox_2.tscn" id="3_iwp64"]
+[ext_resource type="PackedScene" uid="uid://bu217oyyuakeq" path="res://Scenes/Animals/Omnivores/bear.tscn" id="4_4etfk"]
 [ext_resource type="PackedScene" uid="uid://qydqxjmicgiu" path="res://Scenes/Terrain/SandTile.tscn" id="4_7npjy"]
 [ext_resource type="PackedScene" uid="uid://dt8cpvf2io43f" path="res://Scenes/Terrain/StoneTile.tscn" id="5_4vhfm"]
 [ext_resource type="PackedScene" uid="uid://oarhry8a775k" path="res://Scenes/Terrain/WaterTile.tscn" id="6_dvlhv"]
 [ext_resource type="PackedScene" uid="uid://fq0m24lidwvs" path="res://Scenes/Nature/OakTrees/OakTree_01.tscn" id="7_qdkat"]
-[ext_resource type="Script" uid="uid://b8h0clihnu6yi" path="res://Scripts/World Generation/VegetationSpawner.cs" id="8_5s61s"]
+[ext_resource type="Script" uid="uid://b8h0clihnu6yi" path="res://Scripts/World/VegetationSpawner.cs" id="8_5s61s"]
 [ext_resource type="PackedScene" uid="uid://bdjgbxroyrjao" path="res://Scenes/Nature/OakTrees/OakTree_02.tscn" id="8_udh0u"]
 [ext_resource type="PackedScene" uid="uid://cftlv2e8wxsys" path="res://Scenes/Nature/OakTrees/OakTree_03.tscn" id="9_xggvw"]
 [ext_resource type="PackedScene" uid="uid://dty6ugsga5shf" path="res://Scenes/Nature/OakTrees/OakTree_04.tscn" id="10_xd21n"]
@@ -63,6 +64,8 @@ RabbitScene = ExtResource("2_xd21n")
 InitialRabbitCount = 15
 PredatorScene = ExtResource("3_iwp64")
 InitialPredatorCount = 5
+OmnivoreScene = ExtResource("4_4etfk")
+InitialOmnivoreCount = 3
 GrassTile = ExtResource("2_aw1lf")
 WaterTile = ExtResource("6_dvlhv")
 SandTile = ExtResource("4_7npjy")

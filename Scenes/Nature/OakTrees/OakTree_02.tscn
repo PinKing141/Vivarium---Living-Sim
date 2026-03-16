@@ -1,6 +1,12 @@
 [gd_scene format=3 uid="uid://bdjgbxroyrjao"]
 
+[ext_resource type="Script" uid="uid://cjfe1u0obte55" path="res://Scripts/World/Seasons/SeasonalPlant.cs" id="1_tlqku"]
 [ext_resource type="ArrayMesh" uid="uid://bays4msto8tu" path="res://Assets/Terrain/Nature/Trees/OakTrees/Oak_Tree/CommonTree_2.obj" id="1_wo4t4"]
+[ext_resource type="ArrayMesh" uid="uid://budurarf5j63v" path="res://Assets/Terrain/Nature/Trees/OakTrees/Oak_Autumn/CommonTree_Autumn_2.obj" id="2_18cq3"]
+[ext_resource type="Material" uid="uid://cpa5jvvs76nns" path="res://Assets/Terrain/Nature/Trees/OakTrees/Texture/Brown_Trunk.tres" id="3_tlqku"]
+[ext_resource type="ArrayMesh" uid="uid://bqnofpgs0l4g7" path="res://Assets/Terrain/Nature/Trees/OakTrees/Oak_Snow/CommonTree_Snow_2.obj" id="4_xq4rl"]
+[ext_resource type="Material" uid="uid://batanin62h0gw" path="res://Assets/Terrain/Nature/Trees/OakTrees/Texture/Green_Leaves.tres" id="5_o1rob"]
+[ext_resource type="Material" uid="uid://u4pl3tv27jsa" path="res://Assets/Terrain/Nature/Texture/White_snow.tres" id="6_phxpv"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wo4t4"]
 albedo_color = Color(0.4117647, 0.22352941, 0.07058824, 1)
@@ -8,9 +14,23 @@ albedo_color = Color(0.4117647, 0.22352941, 0.07058824, 1)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_54wep"]
 albedo_color = Color(0.02745098, 0.2627451, 0.007843138, 1)
 
-[node name="OakTree" type="Node3D" unique_id=1325342900]
+[node name="OakTree" type="Node3D" unique_id=1325342900 node_paths=PackedStringArray("SpringSummerMesh", "AutumnMesh", "WinterMesh")]
+script = ExtResource("1_tlqku")
+SpringSummerMesh = NodePath("CommonTree2")
+AutumnMesh = NodePath("CommonTreeAutumn2")
+WinterMesh = NodePath("CommonTreeSnow2")
 
 [node name="CommonTree2" type="MeshInstance3D" parent="." unique_id=1955782359]
 mesh = ExtResource("1_wo4t4")
 surface_material_override/0 = SubResource("StandardMaterial3D_wo4t4")
 surface_material_override/1 = SubResource("StandardMaterial3D_54wep")
+
+[node name="CommonTreeAutumn2" type="MeshInstance3D" parent="." unique_id=790411568]
+mesh = ExtResource("2_18cq3")
+surface_material_override/0 = ExtResource("3_tlqku")
+
+[node name="CommonTreeSnow2" type="MeshInstance3D" parent="." unique_id=380689815]
+mesh = ExtResource("4_xq4rl")
+surface_material_override/0 = ExtResource("3_tlqku")
+surface_material_override/1 = ExtResource("5_o1rob")
+surface_material_override/2 = ExtResource("6_phxpv")

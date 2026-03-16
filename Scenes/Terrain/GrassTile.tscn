@@ -1,10 +1,19 @@
 [gd_scene format=3 uid="uid://lnqdoj3ou57o"]
 
+[ext_resource type="Script" uid="uid://de7fvuorjy0hb" path="res://Scripts/World/Seasons/SeasonalTerrain.cs" id="1_3ri8j"]
 [ext_resource type="ArrayMesh" uid="uid://q6hb240tpxll" path="res://Assets/Terrain/Tiles/Grass/grass.obj" id="1_jgjiu"]
 [ext_resource type="Material" uid="uid://gyv0mdecqw8r" path="res://Assets/Terrain/Tiles/Textures/TerrianMaterial.tres" id="1_m5r6p"]
+[ext_resource type="Material" uid="uid://u4pl3tv27jsa" path="res://Assets/Terrain/Nature/Texture/White_snow.tres" id="4_m6q2f"]
 
-[node name="GrassTile" type="Node3D" unique_id=265727698]
+[node name="GrassTile" type="Node3D" unique_id=265727698 node_paths=PackedStringArray("StandardMesh", "SnowMesh")]
+script = ExtResource("1_3ri8j")
+StandardMesh = NodePath("Grass")
+SnowMesh = NodePath("Grass_Snow")
 
 [node name="Grass" type="MeshInstance3D" parent="." unique_id=7869117]
 material_override = ExtResource("1_m5r6p")
+mesh = ExtResource("1_jgjiu")
+
+[node name="Grass_Snow" type="MeshInstance3D" parent="." unique_id=254757651]
+material_override = ExtResource("4_m6q2f")
 mesh = ExtResource("1_jgjiu")

@@ -1,13 +1,32 @@
 [gd_scene format=3 uid="uid://dty6ugsga5shf"]
 
 [ext_resource type="ArrayMesh" uid="uid://yekwomgjsgr7" path="res://Assets/Terrain/Nature/Trees/OakTrees/Oak_Tree/CommonTree_4.obj" id="1_rhrgn"]
+[ext_resource type="Script" uid="uid://cjfe1u0obte55" path="res://Scripts/World/Seasons/SeasonalPlant.cs" id="1_t1git"]
 [ext_resource type="Material" uid="uid://cpa5jvvs76nns" path="res://Assets/Terrain/Nature/Trees/OakTrees/Texture/Brown_Trunk.tres" id="2_wymx1"]
 [ext_resource type="Material" uid="uid://batanin62h0gw" path="res://Assets/Terrain/Nature/Trees/OakTrees/Texture/Green_Leaves.tres" id="3_f4i7y"]
+[ext_resource type="ArrayMesh" uid="uid://dox62n8np5h71" path="res://Assets/Terrain/Nature/Trees/OakTrees/Oak_Autumn/CommonTree_Autumn_4.obj" id="4_0fx1a"]
+[ext_resource type="ArrayMesh" uid="uid://7tuj25ss6gxf" path="res://Assets/Terrain/Nature/Trees/OakTrees/Oak_Snow/CommonTree_Snow_4.obj" id="5_t1git"]
+[ext_resource type="Material" uid="uid://u4pl3tv27jsa" path="res://Assets/Terrain/Nature/Texture/White_snow.tres" id="6_wiwyk"]
 
-[node name="OakTree" type="Node3D" unique_id=1325342900]
+[node name="OakTree" type="Node3D" unique_id=1325342900 node_paths=PackedStringArray("SpringSummerMesh", "AutumnMesh", "WinterMesh")]
+script = ExtResource("1_t1git")
+SpringSummerMesh = NodePath("CommonTree4")
+AutumnMesh = NodePath("CommonTreeAutumn4")
+WinterMesh = NodePath("CommonTreeSnow4")
 
 [node name="CommonTree4" type="MeshInstance3D" parent="." unique_id=1248225622]
 mesh = ExtResource("1_rhrgn")
 surface_material_override/0 = ExtResource("2_wymx1")
 surface_material_override/1 = ExtResource("3_f4i7y")
 surface_material_override/2 = ExtResource("3_f4i7y")
+
+[node name="CommonTreeAutumn4" type="MeshInstance3D" parent="." unique_id=1610617694]
+mesh = ExtResource("4_0fx1a")
+surface_material_override/0 = ExtResource("2_wymx1")
+
+[node name="CommonTreeSnow4" type="MeshInstance3D" parent="." unique_id=1707143579]
+mesh = ExtResource("5_t1git")
+surface_material_override/0 = ExtResource("2_wymx1")
+surface_material_override/1 = ExtResource("3_f4i7y")
+surface_material_override/2 = ExtResource("3_f4i7y")
+surface_material_override/3 = ExtResource("6_wiwyk")

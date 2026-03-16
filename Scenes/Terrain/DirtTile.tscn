@@ -2,9 +2,21 @@
 
 [ext_resource type="Material" uid="uid://cpa5jvvs76nns" path="res://Assets/Terrain/Nature/Trees/OakTrees/Texture/Brown_Trunk.tres" id="1_2ru10"]
 [ext_resource type="ArrayMesh" uid="uid://d2jbcscn7tba1" path="res://Assets/Terrain/Tiles/Dirt/dirt.obj" id="1_tip4g"]
+[ext_resource type="Script" uid="uid://de7fvuorjy0hb" path="res://Scripts/World/Seasons/SeasonalTerrain.cs" id="1_y7j44"]
 
-[node name="DirtTile" type="Node3D" unique_id=1087768775]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2ru10"]
+albedo_color = Color(0.8431839, 0.8431839, 0.84318376, 1)
+metallic = 0.4
+
+[node name="DirtTile" type="Node3D" unique_id=1087768775 node_paths=PackedStringArray("StandardMesh", "SnowMesh")]
+script = ExtResource("1_y7j44")
+StandardMesh = NodePath("Dirt")
+SnowMesh = NodePath("Dirt_Snow")
 
 [node name="Dirt" type="MeshInstance3D" parent="." unique_id=785133863]
 material_override = ExtResource("1_2ru10")
+mesh = ExtResource("1_tip4g")
+
+[node name="Dirt_Snow" type="MeshInstance3D" parent="." unique_id=1224479345]
+material_override = SubResource("StandardMaterial3D_2ru10")
 mesh = ExtResource("1_tip4g")

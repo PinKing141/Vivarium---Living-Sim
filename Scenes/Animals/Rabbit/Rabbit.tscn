@@ -14,7 +14,7 @@ EatAnim = "Armature_001|Idle"
 DeathAnim = "Armature_001|Die"
 
 [node name="Sketchfab_model" parent="." index="0" unique_id=305347149]
-transform = Transform3D(0.255, 0, 0, 0, -1.1146404e-08, 0.255, 0, -0.255, -1.1146404e-08, 0, 0, 0)
+transform = Transform3D(0.205, 0, 0, 0, -8.960835e-09, 0.205, 0, -0.205, -8.960835e-09, 0, 0, 0)
 
 [node name="Skeleton3D" parent="Sketchfab_model/rabbit_fbx/Object_2/RootNode/Armature_001/Object_6" parent_id_path=PackedInt32Array(250034722) index="0" unique_id=987789702]
 bones/1/rotation = Quaternion(0.8775924, 1.14299624e-07, 2.0923429e-07, 0.47940752)

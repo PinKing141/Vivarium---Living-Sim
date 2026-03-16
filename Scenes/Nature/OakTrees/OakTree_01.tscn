@@ -1,12 +1,30 @@
 [gd_scene format=3 uid="uid://fq0m24lidwvs"]
 
+[ext_resource type="Script" uid="uid://cjfe1u0obte55" path="res://Scripts/World/Seasons/SeasonalPlant.cs" id="1_fsfiq"]
 [ext_resource type="ArrayMesh" uid="uid://dcqcbeftonfx2" path="res://Assets/Terrain/Nature/Trees/OakTrees/Oak_Tree/CommonTree_1.obj" id="1_gprmm"]
 [ext_resource type="Material" uid="uid://cpa5jvvs76nns" path="res://Assets/Terrain/Nature/Trees/OakTrees/Texture/Brown_Trunk.tres" id="2_ry0vk"]
 [ext_resource type="Material" uid="uid://batanin62h0gw" path="res://Assets/Terrain/Nature/Trees/OakTrees/Texture/Green_Leaves.tres" id="3_fa27i"]
+[ext_resource type="ArrayMesh" uid="uid://budkoqdeghqlo" path="res://Assets/Terrain/Nature/Trees/OakTrees/Oak_Snow/CommonTree_Snow_1.obj" id="5_icf71"]
+[ext_resource type="Material" uid="uid://u4pl3tv27jsa" path="res://Assets/Terrain/Nature/Texture/White_snow.tres" id="6_fsfiq"]
+[ext_resource type="ArrayMesh" uid="uid://cchiao5wynm26" path="res://Assets/Terrain/Nature/Trees/OakTrees/Oak_Autumn/CommonTree_Autumn_1.obj" id="7_6rgik"]
 
-[node name="OakTree" type="Node3D" unique_id=1325342900]
+[node name="OakTree" type="Node3D" unique_id=1325342900 node_paths=PackedStringArray("SpringSummerMesh", "AutumnMesh", "WinterMesh")]
+script = ExtResource("1_fsfiq")
+SpringSummerMesh = NodePath("CommonTree1")
+AutumnMesh = NodePath("CommonTreeAutumn1")
+WinterMesh = NodePath("CommonTreeSnow1")
 
 [node name="CommonTree1" type="MeshInstance3D" parent="." unique_id=61681380]
 mesh = ExtResource("1_gprmm")
 surface_material_override/0 = ExtResource("2_ry0vk")
 surface_material_override/1 = ExtResource("3_fa27i")
+
+[node name="CommonTreeSnow1" type="MeshInstance3D" parent="." unique_id=1685021706]
+mesh = ExtResource("5_icf71")
+surface_material_override/0 = ExtResource("2_ry0vk")
+surface_material_override/1 = ExtResource("3_fa27i")
+surface_material_override/2 = ExtResource("6_fsfiq")
+
+[node name="CommonTreeAutumn1" type="MeshInstance3D" parent="." unique_id=11877246]
+mesh = ExtResource("7_6rgik")
+surface_material_override/0 = ExtResource("2_ry0vk")
