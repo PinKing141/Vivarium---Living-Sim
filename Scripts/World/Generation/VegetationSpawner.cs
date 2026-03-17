@@ -2,11 +2,14 @@ using Godot;
 
 public partial class VegetationSpawner : Node3D
 {
+	#region Exports
 	[Export] public PackedScene[] OakTrees;
 	[Export] public PackedScene[] Bushes;
 	[Export] public PackedScene[] BerryBushes;
 	[Export] public PackedScene[] Cactus;
+	#endregion
 
+	#region Spawning
 	public void SpawnVegetation(HexTile tile, float density)
 	{
 		float random = GD.Randf();
@@ -48,14 +51,29 @@ public partial class VegetationSpawner : Node3D
 		if (chosen == null)
 			return;
 
-		Node3D plant = (Node3D)chosen.Instantiate();
+		Node3D plant = null;
+		if (ObjectPoolManager.Singleton != null)
+		{
+			plant = ObjectPoolManager.Singleton.Spawn(chosen, this) as Node3D;
+		}
+		else
+		{
+			plant = (Node3D)chosen.Instantiate();
+		}
+
+		if (plant == null)
+			return;
 
 		plant.Position = tile.WorldPosition;
 		plant.RotationDegrees = new Vector3(0, GD.Randf() * 360f, 0);
 
-		AddChild(plant);
+		if (plant.GetParent() == null)
+		{
+			AddChild(plant);
+		}
 
 		// Add the spawned plant to the tile's inventory
 		tile.Vegetation.Add(plant);
 	}
+	#endregion
 }

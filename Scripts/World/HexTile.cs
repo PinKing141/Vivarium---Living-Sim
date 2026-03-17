@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public class HexTile
 {
+	#region Data
 	public Vector2I GridPosition;
 	public Vector3 WorldPosition;
 	public BiomeType Biome;
@@ -15,7 +16,9 @@ public class HexTile
 	public List<Animal> Animals = new List<Animal>(); 
 
 	public bool IsWalkable;
+	#endregion
 
+	#region Construction
 	public HexTile(Vector2I gridPos, Vector3 worldPos, BiomeType biome, float elevation, float moisture, Node3D tileObject)
 	{
 		GridPosition = gridPos;
@@ -26,18 +29,48 @@ public class HexTile
 		TileObject = tileObject;
 		IsWalkable = (biome != BiomeType.Ocean && biome != BiomeType.Mountains);
 	}
+	#endregion
 
+	#region Food
 	public Node3D GetFoodSource()
 	{
+		return GetFoodSource(null);
+	}
+
+	public Node3D GetFoodSource(Animal requester)
+	{
+		InteractionManager interaction = InteractionManager.Singleton;
+
 		foreach (Node3D plant in Vegetation)
 		{
-			if (plant is BerryBush bush) { if (bush.HasFood()) return bush; }
-			else if (plant.Name.ToString().Contains("Berry")) return plant;
+			if (!GodotObject.IsInstanceValid(plant))
+				continue;
+
+			if (interaction != null &&
+				interaction.IsFoodReserved(plant) &&
+				(requester == null || !interaction.IsFoodReservedBy(plant, requester)))
+			{
+				continue;
+			}
+
+			if (plant is BerryBush bush)
+			{
+				if (bush.HasFood()) return bush;
+			}
+			else if (plant.Name.ToString().Contains("Berry"))
+			{
+				return plant;
+			}
 		}
 		return null;
 	}
 
 	public HexTile FindNearestFood(int maxRadius)
+	{
+		return FindNearestFood(maxRadius, null);
+	}
+
+	public HexTile FindNearestFood(int maxRadius, Animal requester)
 	{
 		Queue<HexTile> queue = new Queue<HexTile>();
 		Queue<int> depths = new Queue<int>();
@@ -53,7 +86,7 @@ public class HexTile
 			int currentDepth = depths.Dequeue();
 
 			if (currentDepth > maxRadius) break;
-			if (current != this && current.GetFoodSource() != null) return current;
+			if (current != this && current.GetFoodSource(requester) != null) return current;
 
 			foreach (HexTile neighbour in current.GetWalkableNeighbours())
 			{
@@ -68,6 +101,61 @@ public class HexTile
 		return null;
 	}
 
+	public bool TryFindAndReserveFood(int maxRadius, Animal requester, out HexTile foodTile, out Node3D foodSource)
+	{
+		foodTile = null;
+		foodSource = null;
+
+		if (requester == null)
+			return false;
+
+		InteractionManager interaction = InteractionManager.Singleton;
+
+		Queue<HexTile> queue = new Queue<HexTile>();
+		Queue<int> depths = new Queue<int>();
+		HashSet<HexTile> visited = new HashSet<HexTile>();
+
+		queue.Enqueue(this);
+		depths.Enqueue(0);
+		visited.Add(this);
+
+		while (queue.Count > 0)
+		{
+			HexTile current = queue.Dequeue();
+			int currentDepth = depths.Dequeue();
+
+			if (currentDepth > maxRadius) break;
+
+			if (current != this)
+			{
+				Node3D candidate = current.GetFoodSource(requester);
+				if (candidate != null)
+				{
+					if (interaction == null || interaction.TryReserveFood(requester, candidate))
+					{
+						foodTile = current;
+						foodSource = candidate;
+						return true;
+					}
+				}
+			}
+
+			foreach (HexTile neighbour in current.GetWalkableNeighbours())
+			{
+				if (!visited.Contains(neighbour))
+				{
+					visited.Add(neighbour);
+					queue.Enqueue(neighbour);
+					depths.Enqueue(currentDepth + 1);
+				}
+			}
+		}
+
+		return false;
+	}
+	#endregion
+
+	#region Water
 	public bool IsNextToWater()
 	{
 		foreach (HexTile n in Neighbours)
@@ -107,7 +195,9 @@ public class HexTile
 		}
 		return null;
 	}
+	#endregion
 
+	#region PredatorsAndPrey
 	public Animal GetPrey()
 	{
 		foreach (Animal animal in Animals)
@@ -188,7 +278,9 @@ public class HexTile
 		}
 		return null;
 	}
+	#endregion
 
+	#region Neighbours
 	public HexTile GetNeighbourClosestTo(HexTile targetTile)
 	{
 		HexTile bestNeighbour = null;
@@ -228,7 +320,7 @@ public class HexTile
 		List<HexTile> walkableNeighbours = new List<HexTile>();
 		foreach (HexTile neighbour in Neighbours)
 		{
-			if (neighbour.IsWalkable) walkableNeighbours.Add(neighbour);
+			if (neighbour != null && neighbour.IsWalkable) walkableNeighbours.Add(neighbour);
 		}
 		return walkableNeighbours;
 	}
@@ -243,4 +335,97 @@ public class HexTile
 		}
 		return null;
 	}
+	#endregion
+
+	#region Pathfinding
+	public List<HexTile> FindPathTo(HexTile target, int maxNodes = 1000)
+	{
+		if (target == null)
+			return null;
+
+		if (target == this)
+			return new List<HexTile>();
+
+		if (!target.IsWalkable)
+			return null;
+
+		List<HexTile> openSet = new List<HexTile> { this };
+		HashSet<HexTile> closedSet = new HashSet<HexTile>();
+		Dictionary<HexTile, HexTile> cameFrom = new Dictionary<HexTile, HexTile>();
+		Dictionary<HexTile, float> gScore = new Dictionary<HexTile, float> { { this, 0f } };
+		Dictionary<HexTile, float> fScore = new Dictionary<HexTile, float> { { this, Heuristic(this, target) } };
+
+		int expanded = 0;
+
+		while (openSet.Count > 0)
+		{
+			if (maxNodes > 0 && expanded >= maxNodes)
+				break;
+
+			HexTile current = GetLowestScore(openSet, fScore);
+			if (current == target)
+				return ReconstructPath(cameFrom, current);
+
+			openSet.Remove(current);
+			closedSet.Add(current);
+			expanded++;
+
+			foreach (HexTile neighbour in current.GetWalkableNeighbours())
+			{
+				if (neighbour == null || closedSet.Contains(neighbour))
+					continue;
+
+				float tentative = gScore[current] + current.WorldPosition.DistanceTo(neighbour.WorldPosition);
+				if (!gScore.ContainsKey(neighbour) || tentative < gScore[neighbour])
+				{
+					cameFrom[neighbour] = current;
+					gScore[neighbour] = tentative;
+					fScore[neighbour] = tentative + Heuristic(neighbour, target);
+					if (!openSet.Contains(neighbour))
+						openSet.Add(neighbour);
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private static float Heuristic(HexTile from, HexTile to)
+	{
+		return from.WorldPosition.DistanceTo(to.WorldPosition);
+	}
+
+	private static HexTile GetLowestScore(List<HexTile> nodes, Dictionary<HexTile, float> fScore)
+	{
+		HexTile best = nodes[0];
+		float bestScore = fScore.TryGetValue(best, out float score) ? score : float.MaxValue;
+
+		for (int i = 1; i < nodes.Count; i++)
+		{
+			HexTile candidate = nodes[i];
+			float candidateScore = fScore.TryGetValue(candidate, out float candidateValue) ? candidateValue : float.MaxValue;
+			if (candidateScore < bestScore)
+			{
+				best = candidate;
+				bestScore = candidateScore;
+			}
+		}
+
+		return best;
+	}
+
+	private static List<HexTile> ReconstructPath(Dictionary<HexTile, HexTile> cameFrom, HexTile current)
+	{
+		List<HexTile> path = new List<HexTile>();
+
+		while (cameFrom.TryGetValue(current, out HexTile previous))
+		{
+			path.Add(current);
+			current = previous;
+		}
+
+		path.Reverse();
+		return path;
+	}
+	#endregion
 }

@@ -106,12 +106,12 @@ You have built a remarkably strong foundation. Many procedural generation projec
 
 *Goal: Add critical regulation and management systems to prevent population collapse/explosion and enable genuine emergent behaviour.*
 
-⬜ **Genetic Variation System** — Traits mutate across generations (speed, vision, hunger rate, age, reproduction)
-⬜ **Species Manager** — Track population stats (birth rate, death rate, extinction detection, species counters)
-⬜ **Simulation Tick Manager** — Decouple behavior from frame rate (fixed tick rate for stability)
-⬜ **Event System** — Dispatch events (OnAnimalBorn, OnAnimalDeath, OnPlantConsumed, OnSeasonChanged) for UI/stats
-⬜ **Resource Reservation System** — Prevent 20 animals competing for same food (claim/unclaim mechanic)
-⬜ **Hex Pathfinding** — A* or flow field for long-distance navigation (navigate around water/obstacles)
+✅ **Genetic Variation System** — Traits mutate across generations (speed, vision, hunger rate, age, reproduction)
+✅ **Species Manager** — Track population stats (birth rate, death rate, extinction detection, species counters)
+✅ **Simulation Tick Manager** — Decouple behavior from frame rate (fixed tick rate for stability)
+✅ **Event System** — Dispatch events (OnAnimalBorn, OnAnimalDeath, OnPlantConsumed, OnSeasonChanged) for UI/stats
+✅ **Resource Reservation System** — Prevent 20 animals competing for same food (claim/unclaim mechanic)
+✅ **Hex Pathfinding** — A* or flow field for long-distance navigation (navigate around water/obstacles)
 
 ---
 
@@ -119,8 +119,8 @@ You have built a remarkably strong foundation. Many procedural generation projec
 
 *Goal: Optimise the code so the ecosystem can run massive numbers of entities.*
 
-⬜ Animal Level of Detail (LOD) simulation (background simulation for animals off-camera)
-⬜ Object pooling for animals and plants
+✅ Animal Level of Detail (LOD) simulation (background simulation for animals off-camera)
+✅ Object pooling for animals and plants
 ⬜ Chunk loading for massive map sizes
 
 ---

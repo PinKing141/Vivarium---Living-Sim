@@ -3,13 +3,16 @@ using System;
 
 public partial class CameraController : Camera3D
 {
+	#region Exports
 	[Export] public float PanSpeed = 15.0f;
 	[Export] public float ZoomSpeed = 2.0f;
 	
 	// Limits to stop the camera flying too high or clipping into the ground
 	[Export] public float MinHeight = 5.0f; 
 	[Export] public float MaxHeight = 40.0f;
+	#endregion
 
+	#region GodotLifecycle
 	public override void _Process(double delta)
 	{
 		Vector3 movement = Vector3.Zero;
@@ -30,7 +33,9 @@ public partial class CameraController : Camera3D
 		// We use global positional movement so the camera glides flat over the terrain
 		Position += movement * PanSpeed * (float)delta;
 	}
+	#endregion
 
+	#region Input
 	public override void _Input(InputEvent @event)
 	{
 		// Handle mouse wheel scrolling for zooming
@@ -57,4 +62,5 @@ public partial class CameraController : Camera3D
 			Position = newPosition;
 		}
 	}
+	#endregion
 }

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://ooe6v4olbuaq"]
 
-[ext_resource type="Script" uid="uid://dylqq4lqejtif" path="res://Scripts/Utility/BerryBush.cs" id="1_23kjd"]
+[ext_resource type="Script" path="res://Scripts/Environment/BerryBush.cs" id="1_23kjd"]
 [ext_resource type="ArrayMesh" uid="uid://d2sol28te4rm5" path="res://Assets/Terrain/Nature/Bush/Bush_Normal/Bush_1.obj" id="2_mggqj"]
 [ext_resource type="ArrayMesh" uid="uid://c6xh52gwm4ris" path="res://Assets/Terrain/Nature/Bush/Bush_Berries/BushBerries_1.obj" id="3_7obsw"]
 [ext_resource type="Material" uid="uid://cajg7qm2b3ct8" path="res://Assets/Terrain/Nature/Trees/OakTrees/Texture/Green_Dark_Leaves.tres" id="3_mggqj"]

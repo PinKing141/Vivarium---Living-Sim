@@ -1,22 +1,25 @@
 [gd_scene format=3 uid="uid://3iiw2owm74yy"]
 
-[ext_resource type="Script" uid="uid://b7motiq8f0rtk" path="res://Scripts/World/WorldManager.cs" id="1_p8rbg"]
+[ext_resource type="Script" uid="uid://b7motiq8f0rtk" path="res://Scripts/World/Generation/WorldManager.cs" id="1_p8rbg"]
 [ext_resource type="PackedScene" uid="uid://lnqdoj3ou57o" path="res://Scenes/Terrain/GrassTile.tscn" id="2_aw1lf"]
-[ext_resource type="Script" uid="uid://b262rtv7nmxju" path="res://Scripts/Utility/CameraController.cs" id="2_qtv3y"]
-[ext_resource type="PackedScene" uid="uid://bvbstkk7frir5" path="res://Scenes/Animals/Rabbit/Rabbit.tscn" id="2_xd21n"]
-[ext_resource type="PackedScene" uid="uid://dyji7s11c1xi4" path="res://Scenes/Animals/Fox/fox_2.tscn" id="3_iwp64"]
+[ext_resource type="Script" uid="uid://cymspgpqfbj8k" path="res://Scripts/Observer/CameraController.cs" id="2_qtv3y"]
+[ext_resource type="PackedScene" uid="uid://bvbstkk7frir5" path="res://Scenes/Animals/Herbivores/Rabbit/Rabbit.tscn" id="2_xd21n"]
+[ext_resource type="PackedScene" uid="uid://dyji7s11c1xi4" path="res://Scenes/Animals/Carnivores/Fox/fox_2.tscn" id="3_iwp64"]
 [ext_resource type="PackedScene" uid="uid://bu217oyyuakeq" path="res://Scenes/Animals/Omnivores/bear.tscn" id="4_4etfk"]
 [ext_resource type="PackedScene" uid="uid://qydqxjmicgiu" path="res://Scenes/Terrain/SandTile.tscn" id="4_7npjy"]
 [ext_resource type="PackedScene" uid="uid://dt8cpvf2io43f" path="res://Scenes/Terrain/StoneTile.tscn" id="5_4vhfm"]
 [ext_resource type="PackedScene" uid="uid://oarhry8a775k" path="res://Scenes/Terrain/WaterTile.tscn" id="6_dvlhv"]
 [ext_resource type="PackedScene" uid="uid://fq0m24lidwvs" path="res://Scenes/Nature/OakTrees/OakTree_01.tscn" id="7_qdkat"]
-[ext_resource type="Script" uid="uid://b8h0clihnu6yi" path="res://Scripts/World/VegetationSpawner.cs" id="8_5s61s"]
+[ext_resource type="Script" uid="uid://2i6xb8jr8lg6" path="res://Scripts/World/Generation/VegetationSpawner.cs" id="8_5s61s"]
 [ext_resource type="PackedScene" uid="uid://bdjgbxroyrjao" path="res://Scenes/Nature/OakTrees/OakTree_02.tscn" id="8_udh0u"]
+[ext_resource type="Script" path="res://Scripts/Time/SeasonManager.cs" id="9_32vk6"]
 [ext_resource type="PackedScene" uid="uid://cftlv2e8wxsys" path="res://Scenes/Nature/OakTrees/OakTree_03.tscn" id="9_xggvw"]
 [ext_resource type="PackedScene" uid="uid://dty6ugsga5shf" path="res://Scenes/Nature/OakTrees/OakTree_04.tscn" id="10_xd21n"]
 [ext_resource type="PackedScene" uid="uid://b0jw1eqb78fu2" path="res://Scenes/Nature/OakTrees/OakTree_05.tscn" id="11_iwp64"]
+[ext_resource type="Script" path="res://Scripts/Bootstrap/GameInitialiser.cs" id="11_l4ir0"]
 [ext_resource type="PackedScene" uid="uid://dm4c0v4thtnt2" path="res://Scenes/Nature/Bushes/Bush_01.tscn" id="12_4etfk"]
 [ext_resource type="PackedScene" uid="uid://e3le4vatywvq" path="res://Scenes/Nature/Bushes/Bush_02.tscn" id="13_oa1gp"]
+[ext_resource type="Script" path="res://Scripts/Population/PopulationManager.cs" id="13_qknmw"]
 [ext_resource type="PackedScene" uid="uid://d277akyk0mkjc" path="res://Scenes/Nature/Cactus/Cactus_Normal/Cactus_01.tscn" id="14_32vk6"]
 [ext_resource type="PackedScene" uid="uid://ooe6v4olbuaq" path="res://Scenes/Nature/Bushes/BerryBushes/Berry_Bush_01.tscn" id="14_xggvw"]
 [ext_resource type="PackedScene" uid="uid://cwi8osguoh3ls" path="res://Scenes/Nature/Cactus/Cactus_Normal/Cactus_02.tscn" id="15_crdpj"]
@@ -24,6 +27,13 @@
 [ext_resource type="PackedScene" uid="uid://b060nmbff500n" path="res://Scenes/Nature/Cactus/Cactus_Normal/Cactus_03.tscn" id="16_pob8v"]
 [ext_resource type="PackedScene" uid="uid://diem0eif2y2vg" path="res://Scenes/Nature/Cactus/Cactus_Normal/Cactus_04.tscn" id="17_l4ir0"]
 [ext_resource type="PackedScene" uid="uid://b1ionanettlew" path="res://Scenes/Nature/Cactus/Cactus_Normal/Cactus_05.tscn" id="18_qknmw"]
+[ext_resource type="Script" path="res://Scripts/Simulation/SimulationTickManager.cs" id="25_oa1gp"]
+[ext_resource type="Script" path="res://Scripts/Simulation/InteractionManager.cs" id="27_crdpj"]
+[ext_resource type="Script" path="res://Scripts/Population/SpeciesManager.cs" id="28_rhktw"]
+[ext_resource type="Script" path="res://Scripts/Events/EventSystem.cs" id="29_6y4b3"]
+[ext_resource type="Script" path="res://Scripts/UI/HUD.cs" id="30_1s2c8"]
+[ext_resource type="Script" path="res://Scripts/Time/DayNightManager.cs" id="31_tse0y"]
+[ext_resource type="Script" path="res://Scripts/Pooling/ObjectPoolManager.cs" id="32_pool"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_qdkat"]
 
@@ -60,16 +70,47 @@ shadow_bias = 0.05
 script = ExtResource("1_p8rbg")
 TileSpacing = 1.0
 VegetationSpawner = NodePath("../VegetationSpawner")
-RabbitScene = ExtResource("2_xd21n")
-InitialRabbitCount = 15
-PredatorScene = ExtResource("3_iwp64")
-InitialPredatorCount = 5
-OmnivoreScene = ExtResource("4_4etfk")
-InitialOmnivoreCount = 3
 GrassTile = ExtResource("2_aw1lf")
 WaterTile = ExtResource("6_dvlhv")
 SandTile = ExtResource("4_7npjy")
 StoneTile = ExtResource("5_4vhfm")
+
+[node name="SeasonManager" type="Node3D" parent="." unique_id=1027073000]
+script = ExtResource("9_32vk6")
+
+[node name="DayNightManager" type="Node3D" parent="." unique_id=1813380791 node_paths=PackedStringArray("SunLight", "WorldEnvironment")]
+script = ExtResource("31_tse0y")
+SunLight = NodePath("../DirectionalLight3D")
+WorldEnvironment = NodePath("../WorldEnvironment")
+
+[node name="SimulationTickManager" type="Node3D" parent="." unique_id=2099040889]
+script = ExtResource("25_oa1gp")
+
+[node name="GameInitialiser" type="Node3D" parent="." unique_id=839962035 node_paths=PackedStringArray("WorldManagerRef")]
+script = ExtResource("11_l4ir0")
+WorldManagerRef = NodePath("../WorldManager")
+RabbitScene = ExtResource("2_xd21n")
+PredatorScene = ExtResource("3_iwp64")
+OmnivoreScene = ExtResource("4_4etfk")
+
+[node name="InteractionManager" type="Node3D" parent="." unique_id=656486823]
+script = ExtResource("27_crdpj")
+
+[node name="EventSystem" type="Node3D" parent="." unique_id=1572140084 node_paths=PackedStringArray("PopulationManagerRef", "InteractionManagerRef", "SeasonManagerRef")]
+script = ExtResource("29_6y4b3")
+PopulationManagerRef = NodePath("../PopulationManager")
+InteractionManagerRef = NodePath("../InteractionManager")
+SeasonManagerRef = NodePath("../SeasonManager")
+
+[node name="SpeciesManager" type="Node3D" parent="." unique_id=1273051129 node_paths=PackedStringArray("PopulationManagerRef")]
+script = ExtResource("28_rhktw")
+PopulationManagerRef = NodePath("../PopulationManager")
+
+[node name="PopulationManager" type="Node3D" parent="." unique_id=2042040697]
+script = ExtResource("13_qknmw")
+
+[node name="ObjectPoolManager" type="Node" parent="." unique_id=2111872130]
+script = ExtResource("32_pool")
 
 [node name="VegetationSpawner" type="Node3D" parent="." unique_id=2360425]
 script = ExtResource("8_5s61s")
@@ -82,3 +123,27 @@ Cactus = Array[PackedScene]([ExtResource("14_32vk6"), ExtResource("15_crdpj"), E
 transform = Transform3D(1, 0, 0, 0, 0.7071068, 0.7071068, 0, -0.7071068, 0.7071068, 10, 15, 25)
 current = true
 script = ExtResource("2_qtv3y")
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1870152817 node_paths=PackedStringArray("PopulationManagerRef", "SeasonManagerRef", "DayNightManagerRef", "HudLabel")]
+script = ExtResource("30_1s2c8")
+PopulationManagerRef = NodePath("../PopulationManager")
+SeasonManagerRef = NodePath("../SeasonManager")
+DayNightManagerRef = NodePath("../DayNightManager")
+HudLabel = NodePath("Control/HudLabel")
+
+[node name="Control" type="Control" parent="HUD" unique_id=506020112]
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 320.0
+offset_bottom = 80.0
+
+[node name="HudLabel" type="Label" parent="HUD/Control" unique_id=957778044]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 320.0
+offset_bottom = 80.0
+text = "Season: Spring\nAnimals: 0"

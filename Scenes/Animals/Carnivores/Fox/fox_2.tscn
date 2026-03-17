@@ -1,12 +1,21 @@
 [gd_scene format=3 uid="uid://dyji7s11c1xi4"]
 
 [ext_resource type="PackedScene" uid="uid://hm8liq8oeu7x" path="res://Assets/Animals/Predators/Fox.gltf" id="1_2qu3o"]
-[ext_resource type="Script" uid="uid://bf1ahl3d0wuhj" path="res://Scripts/Simulation/Animal.cs" id="2_c4dfs"]
+[ext_resource type="Script" path="res://Scripts/Simulation/Animal.cs" id="2_c4dfs"]
 
 [node name="Fox2" unique_id=356980971 node_paths=PackedStringArray("AnimPlayer") instance=ExtResource("1_2qu3o")]
 script = ExtResource("2_c4dfs")
 Diet = 1
 MoveSpeed = 1.8
+Acceleration = 4.5
+Deceleration = 5.5
+TurnSpeed = 11.0
+ArriveDistance = 0.5
+PathLookahead = 0.25
+WanderAmplitude = 0.14
+WanderFrequency = 0.6
+AnimationBlendTime = 0.1
+AnimationSpeedScale = 1.05
 SpeciesScenePath = "uid://dyji7s11c1xi4"
 AnimPlayer = NodePath("AnimationPlayer")
 WalkAnim = "Gallop"

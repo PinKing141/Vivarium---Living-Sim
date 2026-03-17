@@ -1,16 +1,21 @@
 using Godot;
 using System;
 
-// --- GLOBAL ENUMS ---
-public enum BiomeType { Ocean, Beach, Grassland, Forest, Desert, Mountains }
+#region Biomes
+public enum BiomeType
+{
+	Ocean,
+	Beach,
+	Grassland,
+	Forest,
+	Desert,
+	Mountains
+}
+#endregion
 
 public partial class WorldManager : Node3D
 {
-	// --- GLOBAL ENVIRONMENT ---
-	public static SeasonType CurrentSeason = SeasonType.Spring;
-	[Export] public float SeasonDuration = 60f; 
-	private float seasonTimer = 0f;
-
+	#region Exports
 	// --- MAP SETTINGS ---
 	[Export] public int MapWidth = 50;
 	[Export] public int MapHeight = 50;
@@ -20,65 +25,50 @@ public partial class WorldManager : Node3D
 	[Export] public float MoistureScale = 0.08f;
 
 	[Export] public VegetationSpawner VegetationSpawner;
-	
-	// --- ANIMAL SETTINGS ---
-	[Export] public PackedScene RabbitScene;
-	[Export] public int InitialRabbitCount = 20; 
-
-	[Export] public PackedScene PredatorScene;
-	[Export] public int InitialPredatorCount = 3; 
-
-	// NEW: Omnivore spawner!
-	[Export] public PackedScene OmnivoreScene;
-	[Export] public int InitialOmnivoreCount = 2; 
 
 	// --- TERRAIN TILES ---
 	[Export] public PackedScene GrassTile;
 	[Export] public PackedScene WaterTile;
 	[Export] public PackedScene SandTile;
 	[Export] public PackedScene StoneTile;
+	#endregion
 
+	#region Fields
 	private FastNoiseLite elevationNoise;
 	private FastNoiseLite moistureNoise;
 	private FastNoiseLite vegetationNoise;
 	private FastNoiseLite blendNoise;
+	private bool warnedMissingTileScene = false;
 
-	private HexTile[,] worldGrid;
+	// Exposed grid so other systems can read map data
+	public HexTile[,] worldGrid { get; private set; }
+	#endregion
 
+
+	#region GodotLifecycle
 	public override void _Ready()
 	{
+		if (MapWidth <= 0 || MapHeight <= 0)
+		{
+			GD.PrintErr("WorldManager: MapWidth and MapHeight must be > 0.");
+			return;
+		}
+
 		worldGrid = new HexTile[MapWidth, MapHeight];
 
 		GenerateNoise();
 		GenerateWorld();
 		BuildTileNeighbours();
-
-		// Spawn all three diet types!
-		SpawnSpecies(RabbitScene, InitialRabbitCount);
-		SpawnSpecies(PredatorScene, InitialPredatorCount);
-		SpawnSpecies(OmnivoreScene, InitialOmnivoreCount);
 	}
+	#endregion
 
-	public override void _Process(double delta)
-	{
-		seasonTimer += (float)delta;
-		if (seasonTimer >= SeasonDuration)
-		{
-			seasonTimer = 0f;
-			AdvanceSeason();
-		}
-	}
 
-	private void AdvanceSeason()
-	{
-		CurrentSeason = (SeasonType)(((int)CurrentSeason + 1) % 4);
-		GD.Print("The season is now: " + CurrentSeason.ToString());
-	}
-
-	// --- WORLD GENERATION ---
+	// ---------- NOISE GENERATION ----------
+	#region NoiseGeneration
 	private void GenerateNoise()
 	{
 		GD.Randomize();
+
 		elevationNoise = new FastNoiseLite();
 		elevationNoise.Seed = (int)GD.Randi();
 		elevationNoise.NoiseType = FastNoiseLite.NoiseTypeEnum.Perlin;
@@ -92,14 +82,18 @@ public partial class WorldManager : Node3D
 		vegetationNoise = new FastNoiseLite();
 		vegetationNoise.Seed = (int)GD.Randi();
 		vegetationNoise.NoiseType = FastNoiseLite.NoiseTypeEnum.Perlin;
-		vegetationNoise.Frequency = 0.12f; 
+		vegetationNoise.Frequency = 0.12f;
 
 		blendNoise = new FastNoiseLite();
 		blendNoise.Seed = (int)GD.Randi();
 		blendNoise.NoiseType = FastNoiseLite.NoiseTypeEnum.Perlin;
-		blendNoise.Frequency = 0.35f; 
+		blendNoise.Frequency = 0.35f;
 	}
+	#endregion
 
+
+	// ---------- WORLD GENERATION ----------
+	#region WorldGeneration
 	private void GenerateWorld()
 	{
 		for (int z = 0; z < MapHeight; z++)
@@ -111,6 +105,7 @@ public partial class WorldManager : Node3D
 		}
 	}
 
+
 	private void SpawnTile(int gridX, int gridZ)
 	{
 		Vector3 worldPosition = GetHexPosition(gridX, gridZ);
@@ -120,24 +115,46 @@ public partial class WorldManager : Node3D
 		float vegetationDensity = vegetationNoise.GetNoise2D(gridX, gridZ);
 
 		float blendWobble = blendNoise.GetNoise2D(gridX, gridZ) * 0.08f;
+
 		float finalElevation = baseElevation + blendWobble;
 		float finalMoisture = baseMoisture + blendWobble;
 
 		BiomeType biome = GetBiome(finalElevation, finalMoisture);
 		PackedScene tileScene = GetTileFromBiome(biome);
 
-		if (tileScene == null) return;
+		if (tileScene == null)
+		{
+			if (!warnedMissingTileScene)
+			{
+				GD.PrintErr($"WorldManager: Missing terrain tile scene for biome {biome}.");
+				warnedMissingTileScene = true;
+			}
+			return;
+		}
 
 		Node3D tileInstance = (Node3D)tileScene.Instantiate();
 		tileInstance.Position = worldPosition;
 		AddChild(tileInstance);
 
-		HexTile tile = new HexTile(new Vector2I(gridX, gridZ), worldPosition, biome, finalElevation, finalMoisture, tileInstance);
+		HexTile tile = new HexTile(
+			new Vector2I(gridX, gridZ),
+			worldPosition,
+			biome,
+			finalElevation,
+			finalMoisture,
+			tileInstance
+		);
+
 		worldGrid[gridX, gridZ] = tile;
 
-		if (VegetationSpawner != null) VegetationSpawner.SpawnVegetation(tile, vegetationDensity);
+		if (VegetationSpawner != null)
+			VegetationSpawner.SpawnVegetation(tile, vegetationDensity);
 	}
+	#endregion
 
+
+	// ---------- NEIGHBOUR BUILDING ----------
+	#region Neighbours
 	private void BuildTileNeighbours()
 	{
 		for (int z = 0; z < MapHeight; z++)
@@ -145,6 +162,10 @@ public partial class WorldManager : Node3D
 			for (int x = 0; x < MapWidth; x++)
 			{
 				HexTile tile = worldGrid[x, z];
+				if (tile == null)
+				{
+					continue;
+				}
 
 				foreach (Vector2I offset in GetHexOffsets(z))
 				{
@@ -154,35 +175,77 @@ public partial class WorldManager : Node3D
 					if (nx < 0 || nx >= MapWidth || nz < 0 || nz >= MapHeight)
 						continue;
 
-					tile.Neighbours.Add(worldGrid[nx, nz]);
+					HexTile neighbour = worldGrid[nx, nz];
+					if (neighbour != null)
+					{
+						tile.Neighbours.Add(neighbour);
+					}
 				}
 			}
 		}
 	}
 
+
 	private Vector2I[] GetHexOffsets(int row)
 	{
-		if (row % 2 == 0) return new Vector2I[] { new Vector2I(-1, 0), new Vector2I(1, 0), new Vector2I(0, -1), new Vector2I(-1, -1), new Vector2I(0, 1), new Vector2I(-1, 1) };
-		else return new Vector2I[] { new Vector2I(-1, 0), new Vector2I(1, 0), new Vector2I(1, -1), new Vector2I(0, -1), new Vector2I(1, 1), new Vector2I(0, 1) };
+		if (row % 2 == 0)
+		{
+			return new Vector2I[]
+			{
+				new Vector2I(-1,0),
+				new Vector2I(1,0),
+				new Vector2I(0,-1),
+				new Vector2I(-1,-1),
+				new Vector2I(0,1),
+				new Vector2I(-1,1)
+			};
+		}
+		else
+		{
+			return new Vector2I[]
+			{
+				new Vector2I(-1,0),
+				new Vector2I(1,0),
+				new Vector2I(1,-1),
+				new Vector2I(0,-1),
+				new Vector2I(1,1),
+				new Vector2I(0,1)
+			};
+		}
 	}
+	#endregion
 
+
+	// ---------- HEX POSITION ----------
+	#region Positioning
 	private Vector3 GetHexPosition(int x, int z)
 	{
 		float xOffset = x * TileSpacing;
-		float zOffset = z * TileSpacing * 0.866f; 
-		if (z % 2 == 1) xOffset += TileSpacing * 0.5f;
+		float zOffset = z * TileSpacing * 0.866f;
+
+		if (z % 2 == 1)
+			xOffset += TileSpacing * 0.5f;
+
 		return new Vector3(xOffset, 0, zOffset);
 	}
+	#endregion
 
+
+	// ---------- BIOME SELECTION ----------
+	#region BiomeSelection
 	private BiomeType GetBiome(float elevation, float moisture)
 	{
-		if (elevation < -0.15f) return BiomeType.Ocean;
-		if (elevation < -0.05f) return BiomeType.Beach;
-		if (elevation > 0.35f)  return BiomeType.Mountains;
-		if (moisture < -0.15f)  return BiomeType.Desert;
-		if (moisture > 0.25f)   return BiomeType.Forest;
+		// Softer overlap bands; blendNoise will push tiles across edges.
+		if (elevation < -0.18f) return BiomeType.Ocean;
+		if (elevation < 0.00f) return BiomeType.Beach;
+		if (elevation > 0.40f) return BiomeType.Mountains;
+
+		if (moisture < -0.22f) return BiomeType.Desert;
+		if (moisture > 0.22f) return BiomeType.Forest;
+
 		return BiomeType.Grassland;
 	}
+
 
 	private PackedScene GetTileFromBiome(BiomeType biome)
 	{
@@ -197,31 +260,37 @@ public partial class WorldManager : Node3D
 			default: return GrassTile;
 		}
 	}
+	#endregion
 
-	private void SpawnSpecies(PackedScene scene, int count)
+
+	// ---------- PUBLIC SPAWN HELPER ----------
+	#region PublicApi
+	public HexTile GetRandomWalkableTile()
 	{
-		if (scene == null) return;
+		if (MapWidth <= 0 || MapHeight <= 0 || worldGrid == null)
+		{
+			GD.PrintErr("WorldManager: Map dimensions are invalid or world grid not initialized.");
+			return null;
+		}
 
-		int spawned = 0;
 		int maxAttempts = 1000;
 		int attempts = 0;
 
-		while (spawned < count && attempts < maxAttempts)
+		while (attempts < maxAttempts)
 		{
 			attempts++;
+
 			int randomX = (int)(GD.Randi() % MapWidth);
 			int randomZ = (int)(GD.Randi() % MapHeight);
-			HexTile randomTile = worldGrid[randomX, randomZ];
 
-			if (randomTile != null && randomTile.IsWalkable)
-			{
-				Animal animal = (Animal)scene.Instantiate();
-				AddChild(animal);
-				animal.Init(randomTile);
-				spawned++;
-			}
+			HexTile tile = worldGrid[randomX, randomZ];
+
+			if (tile != null && tile.IsWalkable)
+				return tile;
 		}
 
-		GD.Print($"Successfully spawned {spawned} animals of species: {scene.ResourcePath}");
+		GD.PrintErr("Failed to find walkable tile.");
+		return null;
 	}
+	#endregion
 }

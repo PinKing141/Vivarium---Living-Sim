@@ -1,6 +1,7 @@
 using Godot;
 using System;
 
+#region SeasonType
 public enum SeasonType 
 { 
 	Spring, 
@@ -8,3 +9,4 @@ public enum SeasonType
 	Autumn, 
 	Winter 
 }
+#endregion

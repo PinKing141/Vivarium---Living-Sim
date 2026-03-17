@@ -1,11 +1,20 @@
 [gd_scene format=3 uid="uid://bvbstkk7frir5"]
 
 [ext_resource type="PackedScene" uid="uid://dcgt2mr8m6to8" path="res://Assets/Animals/Herbivores/Rabbit.glb" id="1_ibill"]
-[ext_resource type="Script" uid="uid://bf1ahl3d0wuhj" path="res://Scripts/Simulation/Animal.cs" id="2_ly6l0"]
+[ext_resource type="Script" path="res://Scripts/Simulation/Animal.cs" id="2_ly6l0"]
 
 [node name="RabbitNode" unique_id=1618555257 node_paths=PackedStringArray("AnimPlayer") instance=ExtResource("1_ibill")]
 script = ExtResource("2_ly6l0")
 EatingDistance = 1.5
+Acceleration = 6.0
+Deceleration = 7.0
+TurnSpeed = 14.0
+ArriveDistance = 0.45
+PathLookahead = 0.2
+WanderAmplitude = 0.25
+WanderFrequency = 0.9
+AnimationBlendTime = 0.08
+AnimationSpeedScale = 1.15
 SpeciesScenePath = "uid://bvbstkk7frir5"
 AnimPlayer = NodePath("AnimationPlayer")
 IdleAnim = "Armature_001|Idle"
