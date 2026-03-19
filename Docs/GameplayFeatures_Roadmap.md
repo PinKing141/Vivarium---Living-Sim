@@ -1,6 +1,3 @@
-You have built a remarkably strong foundation. Many procedural generation projects never make it past Phase 1, but you have successfully completed it and are now stepping into the actual simulation layer.
-
----
 
 # 🌍 LivingSim Ecosystem Development Roadmap
 
@@ -121,7 +118,7 @@ You have built a remarkably strong foundation. Many procedural generation projec
 
 ✅ Animal Level of Detail (LOD) simulation (background simulation for animals off-camera)
 ✅ Object pooling for animals and plants
-⬜ Chunk loading for massive map sizes
+✅ Chunk loading for massive map sizes
 
 ---
 
@@ -129,7 +126,7 @@ You have built a remarkably strong foundation. Many procedural generation projec
 
 *Goal: Give the player tools to watch and interact with the simulation.*
 
-⬜ Free-cam observer controls
+✅ Free-cam observer controls
 ⬜ Animal inspection UI (click an animal to see its stats, age, and hunger)
 ⬜ Time controls (Pause, 1x, 2x, 5x speed)
 ⬜ Ecosystem statistics graphs (population trackers)

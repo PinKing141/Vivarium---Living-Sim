@@ -91,17 +91,23 @@ public partial class Animal : Node3D, IPoolable
 	[Export] public float MoveSpeed = 1.5f;
 	[Export] public int VisionRadius = 6;
 	[Export] public float EatingDistance = 0.8f;
-	[Export] public float Acceleration = 3.5f;
-	[Export] public float Deceleration = 4.5f;
-	[Export] public float TurnSpeed = 10f;
-	[Export] public float ArriveDistance = 0.5f;
-	[Export] public float PathLookahead = 0.25f;
-	[Export] public float WanderAmplitude = 0.18f;
-	[Export] public float WanderFrequency = 0.6f;
-	[Export] public float SeparationRadius = 0.8f;
-	[Export] public float SeparationStrength = 1.1f;
-	[Export] public float ObstacleAvoidRadius = 0.9f;
-	[Export] public float ObstacleAvoidStrength = 1.4f;
+	[Export] public float Acceleration = 1.6f;
+	[Export] public float Deceleration = 2.2f;
+	[Export] public float TurnSpeed = 4.0f;
+	[Export] public float ArriveDistance = 1.2f;
+	[Export] public float PathLookahead = 0.6f;
+	[Export] public float WanderAmplitude = 0.25f;
+	[Export] public float WanderFrequency = 0.3f;
+	[Export] public float SeparationRadius = 1.1f;
+	[Export] public float SeparationStrength = 0.7f;
+	[Export] public float ObstacleAvoidRadius = 1.1f;
+	[Export] public float ObstacleAvoidStrength = 0.8f;
+	[Export(PropertyHint.Range, "0,1,0.01")] public float RestChance = 0.6f;
+	[Export] public float MinRestDuration = 2.5f;
+	[Export] public float MaxRestDuration = 6.0f;
+	[Export(PropertyHint.Range, "0,1,0.01")] public float RestHungerThreshold = 0.8f;
+	[Export(PropertyHint.Range, "0,1,0.01")] public float RestThirstThreshold = 0.8f;
+	[Export] public float MaxContinuousMoveTime = 8.0f;
 
 #endregion
 
@@ -189,9 +195,12 @@ public partial class Animal : Node3D, IPoolable
 
 	private double stateTimer = 0;
 	private Vector3 velocity = Vector3.Zero;
-	private float wanderTime = 0f;
+	private Vector3 wanderOffset = Vector3.Zero;
+	private Vector3 wanderTargetOffset = Vector3.Zero;
+	private float wanderChangeTimer = 0f;
 	private bool isRegistered = false;
 	private SceneTreeTimer deathTimer;
+	private float continuousMoveTime = 0f;
 
 #endregion
 
@@ -231,7 +240,6 @@ public partial class Animal : Node3D, IPoolable
 		if (AnimPlayer != null)
 		{
 			AnimPlayer.SpeedScale = AnimationSpeedScale;
-			AutoAssignAnimations();
 		}
 
 		CurrentHunger = MaxHunger;
@@ -314,7 +322,10 @@ public partial class Animal : Node3D, IPoolable
 		ClearPath();
 
 		velocity = Vector3.Zero;
-		wanderTime = 0f;
+		wanderOffset = Vector3.Zero;
+		wanderTargetOffset = Vector3.Zero;
+		wanderChangeTimer = 0f;
+		continuousMoveTime = 0f;
 		stateTimer = 0f;
 
 		isPregnant = false;
@@ -329,6 +340,146 @@ public partial class Animal : Node3D, IPoolable
 
 		TerritoryCenter = null;
 		CurrentState = AnimalState.Idle;
+	}
+
+	public AnimalSnapshot CreateSnapshot()
+	{
+		var snapshot = new AnimalSnapshot
+		{
+			SpeciesScenePath = SpeciesScenePath,
+			Diet = Diet,
+			Sex = Sex,
+			GridPosition = CurrentTile != null ? CurrentTile.GridPosition : Vector2I.Zero,
+			MoveSpeed = MoveSpeed,
+			VisionRadius = VisionRadius,
+			EatingDistance = EatingDistance,
+			MaxHunger = MaxHunger,
+			MaxThirst = MaxThirst,
+			HungerDrainRate = HungerDrainRate,
+			ThirstDrainRate = ThirstDrainRate,
+			FoodSearchThreshold = FoodSearchThreshold,
+			WaterSearchThreshold = WaterSearchThreshold,
+			MaxAge = MaxAge,
+			BabyAge = BabyAge,
+			YoungAge = YoungAge,
+			OldAge = OldAge,
+			BabyScale = BabyScale,
+			YoungScale = YoungScale,
+			AdultScale = AdultScale,
+			OldScale = OldScale,
+			ModelScale = ModelScale,
+			YOffset = YOffset,
+			ReproductionThreshold = ReproductionThreshold,
+			ReproductionCost = ReproductionCost,
+			ReproductionCooldown = ReproductionCooldown,
+			MinReproductiveAge = MinReproductiveAge,
+			PregnancyDuration = PregnancyDuration,
+			MatingDuration = MatingDuration,
+			RestChance = RestChance,
+			MinRestDuration = MinRestDuration,
+			MaxRestDuration = MaxRestDuration,
+			RestHungerThreshold = RestHungerThreshold,
+			RestThirstThreshold = RestThirstThreshold,
+			MaxContinuousMoveTime = MaxContinuousMoveTime,
+			CurrentAge = CurrentAge,
+			CurrentHunger = CurrentHunger,
+			CurrentThirst = CurrentThirst,
+			TimeSinceLastReproduction = timeSinceLastReproduction,
+			IsPregnant = isPregnant,
+			PregnancyTimer = pregnancyTimer
+		};
+
+		return snapshot;
+	}
+
+	public void ApplySnapshot(AnimalSnapshot snapshot, HexTile tile)
+	{
+		if (snapshot == null || tile == null)
+		{
+			return;
+		}
+
+		ResetTransientState();
+		genetics = null;
+		isRegistered = false;
+
+		SpeciesScenePath = snapshot.SpeciesScenePath;
+		Diet = snapshot.Diet;
+		Sex = snapshot.Sex;
+		MoveSpeed = snapshot.MoveSpeed;
+		VisionRadius = snapshot.VisionRadius;
+		EatingDistance = snapshot.EatingDistance;
+		MaxHunger = snapshot.MaxHunger;
+		MaxThirst = snapshot.MaxThirst;
+		HungerDrainRate = snapshot.HungerDrainRate;
+		ThirstDrainRate = snapshot.ThirstDrainRate;
+		FoodSearchThreshold = snapshot.FoodSearchThreshold;
+		WaterSearchThreshold = snapshot.WaterSearchThreshold;
+		MaxAge = snapshot.MaxAge;
+		BabyAge = snapshot.BabyAge;
+		YoungAge = snapshot.YoungAge;
+		OldAge = snapshot.OldAge;
+		BabyScale = snapshot.BabyScale;
+		YoungScale = snapshot.YoungScale;
+		AdultScale = snapshot.AdultScale;
+		OldScale = snapshot.OldScale;
+		ModelScale = snapshot.ModelScale;
+		YOffset = snapshot.YOffset;
+		ReproductionThreshold = snapshot.ReproductionThreshold;
+		ReproductionCost = snapshot.ReproductionCost;
+		ReproductionCooldown = snapshot.ReproductionCooldown;
+		MinReproductiveAge = snapshot.MinReproductiveAge;
+		PregnancyDuration = snapshot.PregnancyDuration;
+		MatingDuration = snapshot.MatingDuration;
+		RestChance = snapshot.RestChance;
+		MinRestDuration = snapshot.MinRestDuration;
+		MaxRestDuration = snapshot.MaxRestDuration;
+		RestHungerThreshold = snapshot.RestHungerThreshold;
+		RestThirstThreshold = snapshot.RestThirstThreshold;
+		MaxContinuousMoveTime = snapshot.MaxContinuousMoveTime;
+
+		EnsureGeneticsInitialized();
+
+		CurrentAge = snapshot.CurrentAge;
+		CurrentHunger = Mathf.Clamp(snapshot.CurrentHunger, 0f, MaxHunger);
+		CurrentThirst = Mathf.Clamp(snapshot.CurrentThirst, 0f, MaxThirst);
+		timeSinceLastReproduction = snapshot.TimeSinceLastReproduction;
+		isPregnant = snapshot.IsPregnant;
+		pregnancyTimer = snapshot.PregnancyTimer;
+
+		CurrentTile = tile;
+		TerritoryCenter = tile;
+		if (CurrentTile != null && !CurrentTile.Animals.Contains(this))
+		{
+			CurrentTile.Animals.Add(this);
+		}
+
+		UpdateLifeStage();
+		GlobalPosition = tile.WorldPosition + new Vector3(0, GetScaledYOffset(), 0);
+
+		stateTimer = GD.RandRange(0.6f, 1.4f);
+		SetState(AnimalState.Idle);
+		EnsureRegistered();
+	}
+
+	public void DespawnForChunkUnload()
+	{
+		InteractionManager.Singleton?.ReleaseReservation(this);
+
+		if (isRegistered)
+		{
+			PopulationManager.Singleton?.DespawnAnimal(this);
+			isRegistered = false;
+		}
+
+		if (ObjectPoolManager.Singleton != null)
+		{
+			ObjectPoolManager.Singleton.Release(this);
+		}
+		else
+		{
+			QueueFree();
+		}
 	}
 
 	private void ClearDeathTimer()
@@ -413,6 +564,13 @@ public partial class Animal : Node3D, IPoolable
 			case AnimalState.Dead:
 				PlayAnim(DeathAnim);
 				break;
+		}
+
+		if (CurrentState != AnimalState.Wandering)
+		{
+			wanderOffset = Vector3.Zero;
+			wanderTargetOffset = Vector3.Zero;
+			wanderChangeTimer = 0f;
 		}
 	}
 
@@ -507,6 +665,8 @@ public partial class Animal : Node3D, IPoolable
 		{
 			return;
 		}
+
+		UpdateMoveFatigue(delta);
 
 		DrainNeeds(delta);
 		UpdateLifeCycle(delta);
@@ -733,8 +893,31 @@ public partial class Animal : Node3D, IPoolable
 
 		if (targetTile == null)
 		{
-			if (pathDestination != null && SetPathTo(pathDestination))
-				return;
+			if (pathDestination != null)
+			{
+				if (pathDestination == CurrentTile)
+				{
+					ClearPath();
+					ChooseNextAction();
+					return;
+				}
+
+				if (SetPathTo(pathDestination))
+					return;
+			}
+
+			ChooseNextAction();
+			return;
+		}
+
+		if (!targetTile.IsWalkableFor(this))
+		{
+			ClearPath();
+			if (pathDestination != null && pathDestination != CurrentTile)
+			{
+				if (SetPathTo(pathDestination))
+					return;
+			}
 
 			ChooseNextAction();
 			return;
@@ -860,6 +1043,51 @@ public partial class Animal : Node3D, IPoolable
 #endregion
 
 
+#region REST SYSTEM
+
+	private void UpdateMoveFatigue(double delta)
+	{
+		if (IsMovingState(CurrentState))
+		{
+			continuousMoveTime += (float)delta;
+		}
+		else
+		{
+			continuousMoveTime = 0f;
+		}
+	}
+
+	private bool IsMovingState(AnimalState state)
+	{
+		return state == AnimalState.Wandering ||
+			state == AnimalState.SearchingFood ||
+			state == AnimalState.SearchingWater ||
+			state == AnimalState.SeekingMate ||
+			state == AnimalState.Hunting ||
+			state == AnimalState.Fleeing;
+	}
+
+	private bool ShouldRest()
+	{
+		float hungerRatio = MaxHunger > 0f ? CurrentHunger / MaxHunger : 0f;
+		float thirstRatio = MaxThirst > 0f ? CurrentThirst / MaxThirst : 0f;
+		if (hungerRatio < RestHungerThreshold || thirstRatio < RestThirstThreshold)
+		{
+			return false;
+		}
+
+		if (MaxContinuousMoveTime > 0f && continuousMoveTime >= MaxContinuousMoveTime)
+		{
+			return true;
+		}
+
+		float chance = Mathf.Clamp(RestChance, 0f, 1f);
+		return GD.Randf() < chance;
+	}
+
+#endregion
+
+
 #region AI DECISION SYSTEM
 
 	private void ChooseNextAction()
@@ -874,6 +1102,15 @@ public partial class Animal : Node3D, IPoolable
 
 		if (TryAcquireMateTarget())
 			return;
+
+		if (ShouldRest())
+		{
+			float minRest = Mathf.Min(MinRestDuration, MaxRestDuration);
+			float maxRest = Mathf.Max(MinRestDuration, MaxRestDuration);
+			stateTimer = (float)GD.RandRange(minRest, maxRest);
+			SetState(AnimalState.Idle);
+			return;
+		}
 
 		if (CurrentTile == null)
 		{
@@ -1392,7 +1629,7 @@ public partial class Animal : Node3D, IPoolable
 		if (other.CurrentTile == CurrentTile)
 			return true;
 
-		return CurrentTile.Neighbours.Contains(other.CurrentTile);
+		return CurrentTile.IsNeighbour(other.CurrentTile);
 	}
 
 	private void UpdateMatePath()
@@ -1504,7 +1741,7 @@ public partial class Animal : Node3D, IPoolable
 			return true;
 		}
 
-		List<HexTile> path = CurrentTile.FindPathTo(destination, 2000);
+		List<HexTile> path = CurrentTile.FindPathTo(destination, this, 2000);
 		if (path == null || path.Count == 0)
 		{
 			return false;
@@ -1565,10 +1802,21 @@ public partial class Animal : Node3D, IPoolable
 
 			if (CurrentState == AnimalState.Wandering)
 			{
-				wanderTime += delta * WanderFrequency;
-				float offset = (float)System.Math.Sin(wanderTime * 6.283185f);
 				Vector3 side = new Vector3(-dir.Z, 0f, dir.X);
-				basePos += side * (WanderAmplitude * offset);
+				float changeRate = Mathf.Max(0.01f, WanderFrequency);
+				wanderChangeTimer -= delta;
+				if (wanderChangeTimer <= 0f)
+				{
+					float interval = 1f / changeRate;
+					wanderChangeTimer = interval * (float)GD.RandRange(0.6f, 1.4f);
+					float lateral = (float)GD.RandRange(-1.0f, 1.0f);
+					float forward = (float)GD.RandRange(-0.5f, 0.5f);
+					wanderTargetOffset = (side * lateral + dir * forward) * WanderAmplitude;
+				}
+
+				float smooth = 1f - Mathf.Exp(-changeRate * delta);
+				wanderOffset = wanderOffset.Lerp(wanderTargetOffset, smooth);
+				basePos += wanderOffset;
 			}
 		}
 
@@ -1631,6 +1879,12 @@ public partial class Animal : Node3D, IPoolable
 		if (CurrentTile == null || targetTile == null || CurrentTile == targetTile)
 			return false;
 
+		Vector3 targetPos = new Vector3(targetTile.WorldPosition.X, 0f, targetTile.WorldPosition.Z);
+		Vector3 currentPos = new Vector3(GlobalPosition.X, 0f, GlobalPosition.Z);
+		float arrive = Mathf.Max(ArriveDistance * 0.5f, 0.15f);
+		if ((currentPos - targetPos).LengthSquared() <= arrive * arrive)
+			return true;
+
 		Vector3 from = CurrentTile.WorldPosition;
 		Vector3 to = targetTile.WorldPosition;
 		Vector3 segment = new Vector3(to.X - from.X, 0f, to.Z - from.Z);
@@ -1638,7 +1892,7 @@ public partial class Animal : Node3D, IPoolable
 			return false;
 
 		Vector3 mid = new Vector3(from.X + segment.X * 0.5f, 0f, from.Z + segment.Z * 0.5f);
-		Vector3 pos = new Vector3(GlobalPosition.X, 0f, GlobalPosition.Z);
+		Vector3 pos = currentPos;
 		Vector3 dir = segment.Normalized();
 
 		return (pos - mid).Dot(dir) >= 0f;
@@ -1700,7 +1954,7 @@ public partial class Animal : Node3D, IPoolable
 		foreach (Animal a in CurrentTile.Animals)
 			yield return a;
 
-		foreach (HexTile neighbour in CurrentTile.Neighbours)
+		foreach (HexTile neighbour in CurrentTile.GetNeighbours())
 		{
 			if (neighbour == null)
 				continue;
@@ -1718,7 +1972,7 @@ public partial class Animal : Node3D, IPoolable
 		foreach (Node3D v in CurrentTile.Vegetation)
 			yield return v;
 
-		foreach (HexTile neighbour in CurrentTile.Neighbours)
+		foreach (HexTile neighbour in CurrentTile.GetNeighbours())
 		{
 			if (neighbour == null)
 				continue;
@@ -1730,16 +1984,7 @@ public partial class Animal : Node3D, IPoolable
 
 	private bool IsPassableVegetation(Node3D plant)
 	{
-		if (plant is BerryBush)
-			return true;
-
-		string name = plant.Name?.ToString() ?? string.Empty;
-		string lower = name.ToLowerInvariant();
-
-		if (lower.Contains("bush") || lower.Contains("berry"))
-			return true;
-
-		return false;
+		return HexTile.IsPassableVegetation(plant);
 	}
 
 #endregion

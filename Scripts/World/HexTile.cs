@@ -9,6 +9,7 @@ public class HexTile
 	public BiomeType Biome;
 	public float Elevation;
 	public float Moisture;
+	public float Temperature;
 	public Node3D TileObject;
 
 	public List<HexTile> Neighbours = new List<HexTile>();
@@ -18,14 +19,133 @@ public class HexTile
 	public bool IsWalkable;
 	#endregion
 
+	#region NeighbourAccess
+	public IEnumerable<HexTile> GetNeighbours()
+	{
+		WorldManager manager = WorldManager.Singleton;
+		if (manager != null)
+		{
+			foreach (HexTile neighbour in manager.GetNeighbours(GridPosition))
+			{
+				yield return neighbour;
+			}
+
+			yield break;
+		}
+
+		foreach (HexTile neighbour in Neighbours)
+		{
+			yield return neighbour;
+		}
+	}
+
+	public bool IsNeighbour(HexTile other)
+	{
+		if (other == null)
+		{
+			return false;
+		}
+
+		foreach (HexTile neighbour in GetNeighbours())
+		{
+			if (neighbour == other)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+	#endregion
+
+	#region Walkability
+	public bool IsWalkableFor(Animal requester)
+	{
+		if (!IsWalkable)
+		{
+			return false;
+		}
+
+		if (HasBlockingVegetation())
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	public bool HasBlockingVegetation()
+	{
+		if (Vegetation == null || Vegetation.Count == 0)
+		{
+			return false;
+		}
+
+		for (int i = 0; i < Vegetation.Count; i++)
+		{
+			Node3D plant = Vegetation[i];
+			if (plant == null || !GodotObject.IsInstanceValid(plant))
+			{
+				continue;
+			}
+
+			if (!IsPassableVegetation(plant))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static bool IsPassableVegetation(Node3D plant)
+	{
+		if (plant == null)
+		{
+			return true;
+		}
+
+		if (plant is BerryBush)
+		{
+			return true;
+		}
+
+		if (plant.IsInGroup("PassableVegetation"))
+		{
+			return true;
+		}
+
+		if (plant.IsInGroup("BlockingVegetation"))
+		{
+			return false;
+		}
+
+		string name = plant.Name?.ToString() ?? string.Empty;
+		string lower = name.ToLowerInvariant();
+
+		if (lower.Contains("berry"))
+		{
+			return true;
+		}
+
+		if (lower.Contains("bush"))
+		{
+			return true;
+		}
+
+		return false;
+	}
+	#endregion
+
 	#region Construction
-	public HexTile(Vector2I gridPos, Vector3 worldPos, BiomeType biome, float elevation, float moisture, Node3D tileObject)
+	public HexTile(Vector2I gridPos, Vector3 worldPos, BiomeType biome, float elevation, float moisture, float temperature, Node3D tileObject)
 	{
 		GridPosition = gridPos;
 		WorldPosition = worldPos;
 		Biome = biome;
 		Elevation = elevation;
 		Moisture = moisture;
+		Temperature = temperature;
 		TileObject = tileObject;
 		IsWalkable = (biome != BiomeType.Ocean && biome != BiomeType.Mountains);
 	}
@@ -158,7 +278,7 @@ public class HexTile
 	#region Water
 	public bool IsNextToWater()
 	{
-		foreach (HexTile n in Neighbours)
+		foreach (HexTile n in GetNeighbours())
 		{
 			if (n.Biome == BiomeType.Ocean) return true;
 		}
@@ -317,10 +437,15 @@ public class HexTile
 
 	public List<HexTile> GetWalkableNeighbours()
 	{
+		return GetWalkableNeighbours(null);
+	}
+
+	public List<HexTile> GetWalkableNeighbours(Animal requester)
+	{
 		List<HexTile> walkableNeighbours = new List<HexTile>();
-		foreach (HexTile neighbour in Neighbours)
+		foreach (HexTile neighbour in GetNeighbours())
 		{
-			if (neighbour != null && neighbour.IsWalkable) walkableNeighbours.Add(neighbour);
+			if (neighbour != null && neighbour.IsWalkableFor(requester)) walkableNeighbours.Add(neighbour);
 		}
 		return walkableNeighbours;
 	}
@@ -338,7 +463,7 @@ public class HexTile
 	#endregion
 
 	#region Pathfinding
-	public List<HexTile> FindPathTo(HexTile target, int maxNodes = 1000)
+	public List<HexTile> FindPathTo(HexTile target, Animal requester = null, int maxNodes = 1000)
 	{
 		if (target == null)
 			return null;
@@ -346,7 +471,7 @@ public class HexTile
 		if (target == this)
 			return new List<HexTile>();
 
-		if (!target.IsWalkable)
+		if (!target.IsWalkableFor(requester))
 			return null;
 
 		List<HexTile> openSet = new List<HexTile> { this };
@@ -354,6 +479,8 @@ public class HexTile
 		Dictionary<HexTile, HexTile> cameFrom = new Dictionary<HexTile, HexTile>();
 		Dictionary<HexTile, float> gScore = new Dictionary<HexTile, float> { { this, 0f } };
 		Dictionary<HexTile, float> fScore = new Dictionary<HexTile, float> { { this, Heuristic(this, target) } };
+		HexTile bestNode = null;
+		float bestHeuristic = float.MaxValue;
 
 		int expanded = 0;
 
@@ -366,11 +493,18 @@ public class HexTile
 			if (current == target)
 				return ReconstructPath(cameFrom, current);
 
+			float h = Heuristic(current, target);
+			if (h < bestHeuristic)
+			{
+				bestHeuristic = h;
+				bestNode = current;
+			}
+
 			openSet.Remove(current);
 			closedSet.Add(current);
 			expanded++;
 
-			foreach (HexTile neighbour in current.GetWalkableNeighbours())
+			foreach (HexTile neighbour in current.GetWalkableNeighbours(requester))
 			{
 				if (neighbour == null || closedSet.Contains(neighbour))
 					continue;
@@ -385,6 +519,11 @@ public class HexTile
 						openSet.Add(neighbour);
 				}
 			}
+		}
+
+		if (bestNode != null && bestNode != this)
+		{
+			return ReconstructPath(cameFrom, bestNode);
 		}
 
 		return null;

@@ -65,6 +65,16 @@ public partial class PopulationManager : Node
 
     public void UnregisterAnimal(Animal animal, string causeOfDeath = "unknown")
     {
+        RemoveAnimal(animal, true, causeOfDeath);
+    }
+
+    public void DespawnAnimal(Animal animal)
+    {
+        RemoveAnimal(animal, false, "despawned");
+    }
+
+    private void RemoveAnimal(Animal animal, bool emitSignal, string causeOfDeath)
+    {
         if (animal == null)
         {
             return;
@@ -73,7 +83,10 @@ public partial class PopulationManager : Node
         if (activeAnimalSet.Remove(animal))
         {
             activeAnimals.Remove(animal);
-            EmitSignal(SignalName.AnimalDied, animal, causeOfDeath);
+            if (emitSignal)
+            {
+                EmitSignal(SignalName.AnimalDied, animal, causeOfDeath);
+            }
         }
     }
 #endregion

@@ -12,7 +12,12 @@ public partial class VegetationSpawner : Node3D
 	#region Spawning
 	public void SpawnVegetation(HexTile tile, float density)
 	{
-		float random = GD.Randf();
+		SpawnVegetation(tile, density, null);
+	}
+
+	public void SpawnVegetation(HexTile tile, float density, RandomNumberGenerator rng)
+	{
+		float random = rng != null ? rng.Randf() : GD.Randf();
 		PackedScene chosen = null;
 
 		switch (tile.Biome)
@@ -21,11 +26,11 @@ public partial class VegetationSpawner : Node3D
 				if (density > -0.15f)
 				{
 					if (random < 0.45f)
-						chosen = OakTrees[GD.RandRange(0, OakTrees.Length - 1)];
+						chosen = PickScene(OakTrees, rng);
 					else if (random < 0.70f)
-						chosen = Bushes[GD.RandRange(0, Bushes.Length - 1)];
+						chosen = PickScene(Bushes, rng);
 					else if (random < 0.80f)
-						chosen = BerryBushes[GD.RandRange(0, BerryBushes.Length - 1)];
+						chosen = PickScene(BerryBushes, rng);
 				}
 				break;
 
@@ -33,9 +38,9 @@ public partial class VegetationSpawner : Node3D
 				if (density > 0.0f)
 				{
 					if (random < 0.35f)
-						chosen = Bushes[GD.RandRange(0, Bushes.Length - 1)];
+						chosen = PickScene(Bushes, rng);
 					else if (random < 0.40f)
-						chosen = BerryBushes[GD.RandRange(0, BerryBushes.Length - 1)];
+						chosen = PickScene(BerryBushes, rng);
 				}
 				break;
 
@@ -43,7 +48,7 @@ public partial class VegetationSpawner : Node3D
 				if (density > 0.1f)
 				{
 					if (random < 0.35f)
-						chosen = Cactus[GD.RandRange(0, Cactus.Length - 1)];
+						chosen = PickScene(Cactus, rng);
 				}
 				break;
 		}
@@ -74,6 +79,21 @@ public partial class VegetationSpawner : Node3D
 
 		// Add the spawned plant to the tile's inventory
 		tile.Vegetation.Add(plant);
+	}
+	#endregion
+
+	#region Helpers
+	private PackedScene PickScene(PackedScene[] scenes, RandomNumberGenerator rng)
+	{
+		if (scenes == null || scenes.Length == 0)
+		{
+			return null;
+		}
+
+		int index = rng != null
+			? (int)rng.RandiRange(0, scenes.Length - 1)
+			: (int)GD.RandRange(0, scenes.Length - 1);
+		return scenes[index];
 	}
 	#endregion
 }
